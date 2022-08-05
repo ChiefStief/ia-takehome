@@ -2,13 +2,13 @@
 export default {
   data () {
     return {
-      dotDimensions: {},
+      dotRad: 0,
       correctPositionData: {
-        blu: [{ x: [], y: [], }],
-        grn: [{ x: [], y: [], }],
-        red: [{ x: [], y: [], }],
-        blk: [{ x: [], y: [], }],
-        blk2: [{ x: [], y: [], }],
+        blu: { x: [{max:0, min:0}], y: [{max:0, min:0}] },
+        grn: { x: [{max:0, min:0}], y: [{max:0, min:0}] },
+        red: { x: [{max:0, min:0}], y: [{max:0, min:0}] },
+        blk: { x: [{max:0, min:0},{max:0, min:0}], y: [{max:0, min:0},{max:0, min:0}] },
+        // blk2: { x: [{max:0, min:0},{max:0, min:0}], y: [{max:0, min:0},{max:0, min:0}], },
       }
     }
   },
@@ -23,16 +23,46 @@ export default {
       },
       handleDrag(e) {
         // udpdate dot positioning if wanted
-        //console.log('dragE', e);
+        console.log('dfsdf')
+        console.log('dragE', e);
+
+        // rightTop-red:
+        // x: 558
+        // y: 194
+        // rightBottom-blk:
+        // x: 473
+        // y: 457
+        //middle-blu
+        // x: 336
+        // y: 161
+        // top left-blk
+        // x: 136
+        // y: 312
+        // bottom left-grn
+        // x: 270
+        // y: 466
+
+
       },
       handleDragEnd(e) {
         // validate dot positioning
         console.log('dragEnd', e);
       },
       getDotDimensions(){
-        const bludot = document.querySelectorAll('.blu')
+        const bludot = document.querySelectorAll('.blu')[0]
+        this.dotRad = bludot.width / 2
+      },
+      getCorrectLocations(){
+        const emptyLogo = document.querySelectorAll('.empty-logo')
+        console.log('emptyLogo', emptyLogo)
+        const leftOffset = emptyLogo[0].offsetLeft
+        const topOffset = emptyLogo[0].offsetTop
+        console.log('leftOffset', leftOffset)
+        console.log('topOffset', topOffset)
 
-        console.log('bludotWidth', bludot[0].width)
+
+
+        console.log('emptyLogo', emptyLogo)
       }
     },
 
@@ -41,16 +71,21 @@ export default {
 
 
       this.getDotDimensions()
-      //   dot.addEventListener('dragstart', this.dragStart)
-      //   dot.addEventListener('drag', this.handleDrag)
-      //   dot.addEventListener('dragend', this.handleDragEnd)
-      //
-      // });
+      this.getCorrectLocations()
+
+      const dots = document.querySelectorAll('.dot');
+      console.log('dots', dots)
+      dots.forEach(dot => {
+        dot.addEventListener('dragstart', this.dragStart)
+        dot.addEventListener('drag', this.handleDrag)
+        dot.addEventListener('dragend', this.handleDragEnd)
+      });
     }
   }
 </script>
 <template>
   <div class="app-wrapper">
+    {{dotRad}}
     <div>
       <img class="blu dot" ref="blu" draggable="true" src="@/ia-logo-dot-blue.png" />
       <img class="red dot" ref="red" draggable="true" src="@/ia-logo-dot-red.png" />
@@ -61,7 +96,6 @@ export default {
     <div>
       <img class="empty-logo" ref="logo" src="@/ia-logo-back.png" />
     </div>
-
   </div>
 </template>
 
