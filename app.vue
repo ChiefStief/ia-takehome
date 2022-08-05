@@ -1,30 +1,51 @@
 <script>
-  export default {
+export default {
+  data () {
+    return {
+      dotDimensions: {},
+      correctPositionData: {
+        blu: [{ x: [], y: [], }],
+        grn: [{ x: [], y: [], }],
+        red: [{ x: [], y: [], }],
+        blk: [{ x: [], y: [], }],
+        blk2: [{ x: [], y: [], }],
+      }
+    }
+  },
     methods: {
       // handleMouseDown (target) {
       //   console.log('target', target)
       // },
       dragStart(e) {
+        console.log('height', bludot.height)
+        console.log('width', bludot.width)
         console.log('drag starts...');
       },
       handleDrag(e) {
-        console.log('dragE', e);
+        // udpdate dot positioning if wanted
+        //console.log('dragE', e);
       },
       handleDragEnd(e) {
+        // validate dot positioning
         console.log('dragEnd', e);
+      },
+      getDotDimensions(){
+        const bludot = document.querySelectorAll('.blu')
+
+        console.log('bludotWidth', bludot[0].width)
       }
     },
 
     mounted () {
       //get location of dots final state
-      const dots = document.querySelectorAll('.dot');
-      console.log('dots', dots)
-      dots.forEach(dot => {
-        dot.addEventListener('dragstart', this.dragStart)
-        dot.addEventListener('drag', this.handleDrag)
-        dot.addEventListener('dragend', this.handleDragEnd)
 
-      });
+
+      this.getDotDimensions()
+      //   dot.addEventListener('dragstart', this.dragStart)
+      //   dot.addEventListener('drag', this.handleDrag)
+      //   dot.addEventListener('dragend', this.handleDragEnd)
+      //
+      // });
     }
   }
 </script>
@@ -51,6 +72,7 @@
 
   .dot{
     position: absolute;
+    z-index: 10;
   }
 
   .blu{
