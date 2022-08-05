@@ -4,10 +4,10 @@ export default {
     return {
       dotRad: 0,
       correctPositionData: {
-        blu: { x: [{max:0, min:0}], y: [{max:0, min:0}] },
-        grn: { x: [{max:0, min:0}], y: [{max:0, min:0}] },
-        red: { x: [{max:0, min:0}], y: [{max:0, min:0}] },
-        blk: { x: [{max:0, min:0},{max:0, min:0}], y: [{max:0, min:0},{max:0, min:0}] },
+        blu: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        grn: { x: [{ max:0, min:0 }], y: [{ max:0, min:0 }] },
+        red: { x: [{ max:0, min:0 }], y: [{ max:0, min:0 }] },
+        blk: { x: [{ max:0, min:0 },{ max:0, min:0 }], y: [{ max:0, min:0 },{ max:0, min:0 }] },
         // blk2: { x: [{max:0, min:0},{max:0, min:0}], y: [{max:0, min:0},{max:0, min:0}], },
       }
     }
@@ -17,14 +17,14 @@ export default {
       //   console.log('target', target)
       // },
       dragStart(e) {
-        console.log('height', bludot.height)
-        console.log('width', bludot.width)
-        console.log('drag starts...');
+        // console.log('height', bludot.height)
+        // console.log('width', bludot.width)
+        // console.log('drag starts...');
       },
       handleDrag(e) {
         // udpdate dot positioning if wanted
-        console.log('dfsdf')
-        console.log('dragE', e);
+        // console.log('dfsdf')
+        // console.log('dragE', e);
 
         // rightTop-red:
         // x: 558
@@ -33,8 +33,8 @@ export default {
         // x: 473
         // y: 457
         //middle-blu
-        // x: 336
-        // y: 161
+        // x: 386
+        // y: 194
         // top left-blk
         // x: 136
         // y: 312
@@ -46,7 +46,20 @@ export default {
       },
       handleDragEnd(e) {
         // validate dot positioning
-        console.log('dragEnd', e);
+       //  console.log('e.target.id', e.target.id)
+        let isCorrect = false
+        this.correctPositionData[e.target.id].forEach(possibleLocation=>{
+          console.log('possibleLocationx', possibleLocation.x)
+          console.log('possibleLocationy', possibleLocation.y)
+          console.log('e.x', e.x)
+          console.log('e.y', e.y)
+
+          isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max) || isCorrect
+        })
+        console.log('isCorrect', isCorrect)
+        // return isCorrect
+
+         console.log('dragEnd', e);
       },
       getDotDimensions(){
         const bludot = document.querySelectorAll('.blu')[0]
@@ -59,6 +72,9 @@ export default {
         const topOffset = emptyLogo[0].offsetTop
         console.log('leftOffset', leftOffset)
         console.log('topOffset', topOffset)
+        this.correctPositionData.blu[0].x={max: 386+this.dotRad, min: 386-this.dotRad}
+        this.correctPositionData.blu[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
+
 
 
 
@@ -87,7 +103,7 @@ export default {
   <div class="app-wrapper">
     {{dotRad}}
     <div>
-      <img class="blu dot" ref="blu" draggable="true" src="@/ia-logo-dot-blue.png" />
+      <img class="blu dot" ref="blu" id="blu" draggable="true" src="@/ia-logo-dot-blue.png" />
       <img class="red dot" ref="red" draggable="true" src="@/ia-logo-dot-red.png" />
       <img class="grn dot" ref="grn" draggable="true" src="@/ia-logo-dot-green.png" />
       <img class="blk dot" ref="blk" draggable="true" src="@/ia-logo-dot-black.png" />
