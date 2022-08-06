@@ -8,19 +8,21 @@ export default {
         red: 'left: 140px; top: 10px;',
         grn: 'left: 270px; top: 10px;',
         blk: 'left: 400px;; top: 10px;',
-        blk2: 'left: 530px; top: 10px;'
+        blk2: 'left: 530px; top: 10px;',
+        // emptyLogo: ''
       },
       style: {
         blu: 'left: 10px; top: 10px;',
         red: 'left: 140px; top: 10px;',
         grn: 'left: 270px; top: 10px;',
         blk: 'left: 400px;; top: 10px;',
-        blk2: 'left: 530px; top: 10px;'
+        blk2: 'left: 530px; top: 10px;',
+        emptyLogo: 'position: absolute; left: 50%; margin-left:-300px; top: 130px'
       },
       endStyle: {
-        blu: 'top: 177px; left:286px',
+        // blu: 'top: 177px; left:286px',
         red: 'top: 201px; left:466px',
-        grn: 'top: 465px; left:153px',
+        //grn: 'top: 465px; left:153px',
         blkl: 'top: 320px; left:56px',
         blkr: 'top: 416px; left:430px',
       },
@@ -46,9 +48,6 @@ export default {
     }
   },
     methods: {
-      // handleMouseDown (target) {
-      //   console.log('target', target)
-      // },
       resetPositions () {
         this.style = {...this.initStyle}
         this.positionsFilled = {
@@ -67,9 +66,9 @@ export default {
         // console.log('drag starts...');
       },
       handleDrag(e) {
-        console.log('dragE', e)
-        console.log('data', this.data)
-        console.log('e.target.id', e.target.id)
+        // console.log('dragE', e)
+        // console.log('data', this.data)
+        // console.log('e.target.id', e.target.id)
       },
       handleDragEnd(e) {
         // validate dot positioning
@@ -106,10 +105,59 @@ export default {
         const bludot = document.querySelectorAll('.blu')[0]
         this.dotRad = bludot.width / 2
       },
+      getLogoDimensions(){
+        // const emptyLogo = document.querySelectorAll('.empty-logo')
+        // const logoWidth = emptyLogo[0].width
+        // console.log('logoWidth', logoWidth)
+        //
+        // this.style.emptyLogo = `position: absolute; left: 50%; margin-left:-${logoWidth/2}px; top: 130px`
+
+
+      },
       getCorrectLocations(){
         const emptyLogo = document.querySelectorAll('.empty-logo')
+        // const logoWidth = emptyLogo[0].width
+        //
+        // this.style.emptyLogo = `position: absolute; left: 50%; margin-left:-${logoWidth/2}px; top: 130px`
+
+
+
         const leftOffset = emptyLogo[0].offsetLeft
         const topOffset = emptyLogo[0].offsetTop
+        // this.initStyle.emptyLogo =
+
+
+        //could make function but would likely have to do math for where center is based on where clicked etc
+
+        //blu
+        this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
+        this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
+        this.correctPositionData.blu[0].id='blu'
+        this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
+
+        //grn
+        this.correctPositionData.grn[0].x={max: leftOffset+260+this.dotRad, min: leftOffset+260-this.dotRad}
+        this.correctPositionData.grn[0].y={max: topOffset+336+this.dotRad, min: topOffset+336-this.dotRad}
+        this.correctPositionData.grn[0].id='grn'
+        this.endStyle.grn = `top: ${topOffset+335}px; left:${leftOffset+143}px`
+
+        //Here
+
+        //red
+        this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
+        this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
+        this.correctPositionData.blu[0].id='blu'
+        this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
+
+        this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
+        this.correctPositionData.red[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
+        this.correctPositionData.red[0].id='red'
+
+
+            console.log('emptyLogo', emptyLogo)
+        console.log('leftOffset', leftOffset)
+        console.log('topOffset', topOffset)
+
 
 
         // look into whether this has bad perf side effects
@@ -130,13 +178,13 @@ export default {
         // x: 270
         // y: 466
 
-        this.correctPositionData.blu[0].x={max: 386+this.dotRad, min: 386-this.dotRad}
-        this.correctPositionData.blu[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
-        this.correctPositionData.blu[0].id='blu'
+        // this.correctPositionData.blu[0].x={max: 386+this.dotRad, min: 386-this.dotRad}
+        // this.correctPositionData.blu[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
+        // this.correctPositionData.blu[0].id='blu'
 
-        this.correctPositionData.grn[0].x={max: 270+this.dotRad, min: 270-this.dotRad}
-        this.correctPositionData.grn[0].y={max: 466+this.dotRad, min: 466-this.dotRad}
-        this.correctPositionData.grn[0].id='grn'
+        // this.correctPositionData.grn[0].x={max: 270+this.dotRad, min: 270-this.dotRad}
+        // this.correctPositionData.grn[0].y={max: 466+this.dotRad, min: 466-this.dotRad}
+        // this.correctPositionData.grn[0].id='grn'
 
 
         this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
@@ -144,8 +192,8 @@ export default {
         this.correctPositionData.red[0].id='red'
 
 
-        this.correctPositionData.blk[0].x={max: 473+this.dotRad, min: 473-this.dotRad}
-        this.correctPositionData.blk[0].y={max: 457+this.dotRad, min: 457-this.dotRad}
+        this.correctPositionData.blk[0].x={max: 493+this.dotRad, min: 493-this.dotRad}
+        this.correctPositionData.blk[0].y={max: 410+this.dotRad, min: 410-this.dotRad}
         this.correctPositionData.blk[0].id='blkr'
 
 
@@ -155,10 +203,11 @@ export default {
 
 
         this.correctPositionData.blk2 = [...this.correctPositionData.blk]
-
-
-
-
+      },
+      //setupLocation({topOffset, leftOffset,)
+      handleResize() {
+        this.getCorrectLocations()
+        // move correct dots to correct place
       }
     },
 
@@ -168,6 +217,8 @@ export default {
 
       this.getDotDimensions()
       this.getCorrectLocations()
+      window.addEventListener('resize', this.handleResize)
+
 
       const dots = document.querySelectorAll('.dot');
       dots.forEach(dot => {
@@ -198,9 +249,9 @@ export default {
 <!--      <button @click="moveTest" />-->
     </div>
     <div>
-      <img class="empty-logo" id="logo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
+      <img class="empty-logo" id="logo" :style="style.emptyLogo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
     </div>
-    <button @click="resetPositions()"> Reset</button>
+    <button class="reset-btn"  @click="resetPositions()">Reset </button>
   </div>
 </template>
 
@@ -209,42 +260,27 @@ export default {
 
 /*  dynamically generate dots locations based off of logo image width*/
 
+.title{
+
+}
+
   .dot{
     position: absolute;
     z-index: 10;
     cursor: move;
   }
 
-  /*.blu{*/
-  /*  left: 10px;*/
-  /*  top: 10px;*/
-  /*}*/
+  .reset-btn {
 
-  /*.red{*/
-  /*  left: 140px;*/
-  /*  top: 10px;*/
-  /*}*/
-
-  /*.grn{*/
-  /*  left: 270px;*/
-  /*  top: 10px;*/
-  /*}*/
-
-  /*.blk{*/
-  /*  left: 400px;*/
-  /*  top: 10px;*/
-  /*}*/
-
-  /*.blk2{*/
-  /*  left: 530px;*/
-  /*  top: 10px;*/
-  /*}*/
-
-  .empty-logo {
-    position: absolute;
-    left: 10px;
-    top: 130px;
   }
+  /*.empty-logo {*/
+  /*  margin-top: 103px;*/
+  /*  margin-left: 2px;*/
+  /*  !*left offset 10, top offset 130 for current numbers*!*/
+  /*  !*position: absolute;*!*/
+  /*  !*left: 10px;*!*/
+  /*  !*top: 130px;*!*/
+  /*}*/
 
 
 
