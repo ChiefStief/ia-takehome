@@ -3,28 +3,108 @@ export default {
   data () {
     return {
       dotRad: 0,
+      initStyle: {
+        blu: 'left: 10px; top: 10px;',
+        red: 'left: 140px; top: 10px;',
+        grn: 'left: 270px; top: 10px;',
+        blk: 'left: 400px;; top: 10px;',
+        blk2: 'left: 530px; top: 10px;'
+      },
+      style: {
+        blu: 'left: 10px; top: 10px;',
+        red: 'left: 140px; top: 10px;',
+        grn: 'left: 270px; top: 10px;',
+        blk: 'left: 400px;; top: 10px;',
+        blk2: 'left: 530px; top: 10px;'
+      },
+      endStyle: {
+        blu: 'top: 177px; left:286px',
+        red: 'top: 201px; left:466px',
+        grn: 'top: 465px; left:153px',
+        //still need these two
+        blkl: 'top: 177px; left:286px',
+        blkr: 'top: 177px; left:286px',
+      },
+      positionsFilled: {
+        blu: false,
+        red: false,
+        grn: false,
+        blkl: false,
+        blkr: false,
+      },
       correctPositionData: {
         blu: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        grn: { x: [{ max:0, min:0 }], y: [{ max:0, min:0 }] },
-        red: { x: [{ max:0, min:0 }], y: [{ max:0, min:0 }] },
-        blk: { x: [{ max:0, min:0 },{ max:0, min:0 }], y: [{ max:0, min:0 },{ max:0, min:0 }] },
-        // blk2: { x: [{max:0, min:0},{max:0, min:0}], y: [{max:0, min:0},{max:0, min:0}], },
+        grn: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        red: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        blk: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }, { x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        blk2: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }, { x: { max:0, min:0 }, y: { max:0, min:0 } }]
       }
+    }
+  },
+  computed: {
+    isComplete(){
+      return Object.values(this.positionsFilled).every((v) => v === true)
     }
   },
     methods: {
       // handleMouseDown (target) {
       //   console.log('target', target)
       // },
+      resetPositions () {
+        this.style = {...this.initStyle}
+        this.positionsFilled = {
+          blu: false,
+          red: false,
+          grn: false,
+          blkl: false,
+          blkr: false,
+        }
+      },
       dragStart(e) {
+       //  e.dataTransfer.setDragImage(img, 0, 0)
+        // e.preventDefault()
         // console.log('height', bludot.height)
         // console.log('width', bludot.width)
         // console.log('drag starts...');
       },
       handleDrag(e) {
-        // udpdate dot positioning if wanted
-        // console.log('dfsdf')
-        // console.log('dragE', e);
+        console.log('dragE', e)
+        console.log('data', this.data)
+        console.log('e.target.id', e.target.id)
+      },
+      handleDragEnd(e) {
+        // validate dot positioning
+       //  console.log('e.target.id', e.target.id)
+        let isCorrect = false
+        this.correctPositionData[e.target.id].forEach(possibleLocation=>{
+          if (e.target.id === 'blk' ||e.target.id === 'blk2' ) {
+
+          }
+          // console.log('possibleLocationx', possibleLocation.x)
+          // console.log('possibleLocationy', possibleLocation.y)
+          // console.log('e.x', e.x)
+          // console.log('e.y', e.y)
+          isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max) || isCorrect
+        })
+        if (isCorrect) {
+          // e.preventDefault()
+          this.style[e.target.id] = this.endStyle[e.target.id]
+        }
+        console.log('isCorrect', isCorrect)
+        // return isCorrect
+
+      },
+      getDotDimensions(){
+        const bludot = document.querySelectorAll('.blu')[0]
+        this.dotRad = bludot.width / 2
+      },
+      getCorrectLocations(){
+        const emptyLogo = document.querySelectorAll('.empty-logo')
+        const leftOffset = emptyLogo[0].offsetLeft
+        const topOffset = emptyLogo[0].offsetTop
+
+
+        // look into whether this has bad perf side effects
 
         // rightTop-red:
         // x: 558
@@ -42,43 +122,26 @@ export default {
         // x: 270
         // y: 466
 
-
-      },
-      handleDragEnd(e) {
-        // validate dot positioning
-       //  console.log('e.target.id', e.target.id)
-        let isCorrect = false
-        this.correctPositionData[e.target.id].forEach(possibleLocation=>{
-          console.log('possibleLocationx', possibleLocation.x)
-          console.log('possibleLocationy', possibleLocation.y)
-          console.log('e.x', e.x)
-          console.log('e.y', e.y)
-
-          isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max) || isCorrect
-        })
-        console.log('isCorrect', isCorrect)
-        // return isCorrect
-
-         console.log('dragEnd', e);
-      },
-      getDotDimensions(){
-        const bludot = document.querySelectorAll('.blu')[0]
-        this.dotRad = bludot.width / 2
-      },
-      getCorrectLocations(){
-        const emptyLogo = document.querySelectorAll('.empty-logo')
-        console.log('emptyLogo', emptyLogo)
-        const leftOffset = emptyLogo[0].offsetLeft
-        const topOffset = emptyLogo[0].offsetTop
-        console.log('leftOffset', leftOffset)
-        console.log('topOffset', topOffset)
         this.correctPositionData.blu[0].x={max: 386+this.dotRad, min: 386-this.dotRad}
         this.correctPositionData.blu[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
 
+        this.correctPositionData.grn[0].x={max: 270+this.dotRad, min: 270-this.dotRad}
+        this.correctPositionData.grn[0].y={max: 466+this.dotRad, min: 466-this.dotRad}
+
+        this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
+        this.correctPositionData.red[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
+
+        this.correctPositionData.blk[0].x={max: 473+this.dotRad, min: 473-this.dotRad}
+        this.correctPositionData.blk[0].y={max: 457+this.dotRad, min: 457-this.dotRad}
+
+        this.correctPositionData.blk[1].x={max: 136+this.dotRad, min: 136-this.dotRad}
+        this.correctPositionData.blk[1].y={max: 312+this.dotRad, min: 312-this.dotRad}
+
+        this.correctPositionData.blk2 = [...this.correctPositionData.blk]
 
 
 
-        console.log('emptyLogo', emptyLogo)
+
       }
     },
 
@@ -90,12 +153,19 @@ export default {
       this.getCorrectLocations()
 
       const dots = document.querySelectorAll('.dot');
-      console.log('dots', dots)
       dots.forEach(dot => {
         dot.addEventListener('dragstart', this.dragStart)
         dot.addEventListener('drag', this.handleDrag)
         dot.addEventListener('dragend', this.handleDragEnd)
+        dot.addEventListener('drop', this.handleDrop)
+
       });
+
+      // document.ondragover = (e) => {
+      //   if (draggedId === "logo") {
+      //     e.preventDefault();
+      //   }
+      // }
     }
   }
 </script>
@@ -103,15 +173,17 @@ export default {
   <div class="app-wrapper">
     {{dotRad}}
     <div>
-      <img class="blu dot" ref="blu" id="blu" draggable="true" src="@/ia-logo-dot-blue.png" />
-      <img class="red dot" ref="red" draggable="true" src="@/ia-logo-dot-red.png" />
-      <img class="grn dot" ref="grn" draggable="true" src="@/ia-logo-dot-green.png" />
-      <img class="blk dot" ref="blk" draggable="true" src="@/ia-logo-dot-black.png" />
-      <img class="blk2 dot" ref="blk2" draggable="true" src="@/ia-logo-dot-black.png" />
+      <img class="blu dot" ref="blu" id="blu" :style="style.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
+      <img class="red dot" ref="red" id="red" :style="style.red" draggable="true" src="@/ia-logo-dot-red.png" />
+      <img class="grn dot" ref="grn" id="grn" :style="style.grn" draggable="true" src="@/ia-logo-dot-green.png" />
+      <img class="blk dot" ref="blk" id="blk" :style="style.blk" draggable="true" src="@/ia-logo-dot-black.png" />
+      <img class="blk2 dot" ref="blk2" id="blk2" :style="style.blk2" draggable="true" src="@/ia-logo-dot-black.png" />
+<!--      <button @click="moveTest" />-->
     </div>
     <div>
-      <img class="empty-logo" ref="logo" src="@/ia-logo-back.png" />
+      <img class="empty-logo" id="logo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
     </div>
+    <button @click="resetPositions()"> Reset</button>
   </div>
 </template>
 
@@ -123,32 +195,33 @@ export default {
   .dot{
     position: absolute;
     z-index: 10;
+    cursor: move;
   }
 
-  .blu{
-    left: 10px;
-    top: 10px;
-  }
+  /*.blu{*/
+  /*  left: 10px;*/
+  /*  top: 10px;*/
+  /*}*/
 
-  .red{
-    left: 140px;
-    top: 10px;
-  }
+  /*.red{*/
+  /*  left: 140px;*/
+  /*  top: 10px;*/
+  /*}*/
 
-  .grn{
-    left: 270px;
-    top: 10px;
-  }
+  /*.grn{*/
+  /*  left: 270px;*/
+  /*  top: 10px;*/
+  /*}*/
 
-  .blk{
-    left: 400px;
-    top: 10px;
-  }
+  /*.blk{*/
+  /*  left: 400px;*/
+  /*  top: 10px;*/
+  /*}*/
 
-  .blk2{
-    left: 530px;
-    top: 10px;
-  }
+  /*.blk2{*/
+  /*  left: 530px;*/
+  /*  top: 10px;*/
+  /*}*/
 
   .empty-logo {
     position: absolute;
