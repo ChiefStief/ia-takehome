@@ -2,23 +2,17 @@
 export default {
   data () {
     return {
-      dotRad: 0,
-      initStyle: {
-        blu: 'left: 10px; top: 10px;',
-        red: 'left: 140px; top: 10px;',
-        grn: 'left: 270px; top: 10px;',
-        blk: 'left: 400px;; top: 10px;',
-        blk2: 'left: 530px; top: 10px;',
-        // emptyLogo: ''
+      mounted: false,
+      dotRad: 43,
+      cursorOffset: {left:0, top:0},
+      initPos: {
+        blu: { left: 10, top: 10 },
+        red: {left: 140, top: 10},
+        grn: {left: 270, top: 10},
+        blk: {left: 400, top: 10},
+        blk2: {left: 530, top: 10},
       },
-      style: {
-        blu: 'left: 10px; top: 10px;',
-        red: 'left: 140px; top: 10px;',
-        grn: 'left: 270px; top: 10px;',
-        blk: 'left: 400px;; top: 10px;',
-        blk2: 'left: 530px; top: 10px;',
-        emptyLogo: 'position: absolute; left: 50%; margin-left:-300px; top: 130px'
-      },
+      style: { },
       endStyle: {
         // blu: 'top: 177px; left:286px',
         red: 'top: 201px; left:466px',
@@ -45,75 +39,38 @@ export default {
   computed: {
     isComplete(){
       return Object.values(this.positionsFilled).every((v) => v === true)
+    },
+    // initPos(){
+    //   if(!this.mounted) return
+    //   console.log('logo', this.$refs.logo)
+    //   const emptyLogo = this.$refs["logo"] //document.querySelectorAll('.empty-logo')
+    //   // const logoWidth = emptyLogo[0].width
+    //   //
+    //   // this.style.emptyLogo = `position: absolute; left: 50%; margin-left:-${logoWidth/2}px; top: 130px`
+    //
+    //
+    //
+    //   const leftOffset = emptyLogo[0].offsetLeft
+    //   const topOffset = emptyLogo[0].offsetTop
+    //   console.log('leftOffset')
+    //   let curLeft = leftOffset
+    //   let initPosReplacement = {}
+    //   for(let dot in this.correctPositionData){
+    //     initPosReplacement[dot]={ left:curLeft, top:10 }
+    //     curLeft = curLeft + 129
+    //   }
+    //   return {...initPosReplacement}
+    // },
+    initStyle(){
+      let toReturn = { }
+      for(let dot in this.initPos){
+        toReturn[dot] = `left:${this.initPos[dot].left}px; top:${this.initPos[dot].top}px;`
+      }
+      return toReturn
     }
   },
     methods: {
-      resetPositions () {
-        this.style = {...this.initStyle}
-        this.positionsFilled = {
-          blu: false,
-          red: false,
-          grn: false,
-          blkl: false,
-          blkr: false,
-        }
-      },
-      dragStart(e) {
-       //  e.dataTransfer.setDragImage(img, 0, 0)
-        // e.preventDefault()
-        // console.log('height', bludot.height)
-        // console.log('width', bludot.width)
-        // console.log('drag starts...');
-      },
-      handleDrag(e) {
-        // console.log('dragE', e)
-        // console.log('data', this.data)
-        // console.log('e.target.id', e.target.id)
-      },
-      handleDragEnd(e) {
-        // validate dot positioning
-       //  console.log('e.target.id', e.target.id)
-        let isCorrect = false
-        let positionId
-        this.correctPositionData[e.target.id].forEach(possibleLocation=>{
-          if (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
-            isCorrect = true
-            positionId = possibleLocation.id
-          }
 
-          //isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) || isCorrect
-
-
-          // if (isCorrect && (e.target.id === 'blk' || e.target.id === 'blk2')) {
-          //   isCorrect = !this.positionsFilled[possibleLocation.id]
-          // }
-          // console.log('possibleLocationx', possibleLocation.x)
-          // console.log('possibleLocationy', possibleLocation.y)
-          // console.log('e.x', e.x)
-          // console.log('e.y', e.y)
-        })
-        if (isCorrect) {
-          // e.preventDefault()
-          this.positionsFilled[positionId] = true
-          this.style[e.target.id] = this.endStyle[positionId]
-        }
-        console.log('isCorrect', isCorrect)
-        // return isCorrect
-
-      },
-      getDotDimensions(){
-        const bludot = document.querySelectorAll('.blu')[0]
-        this.dotRad = bludot.width / 2
-      },
-      getLogoDimensions(){
-        // const emptyLogo = document.querySelectorAll('.empty-logo')
-        // const logoWidth = emptyLogo[0].width
-        // console.log('logoWidth', logoWidth)
-        //
-        // this.style.emptyLogo = `position: absolute; left: 50%; margin-left:-${logoWidth/2}px; top: 130px`
-
-
-      },
       getCorrectLocations(){
         const emptyLogo = document.querySelectorAll('.empty-logo')
         // const logoWidth = emptyLogo[0].width
@@ -124,6 +81,15 @@ export default {
 
         const leftOffset = emptyLogo[0].offsetLeft
         const topOffset = emptyLogo[0].offsetTop
+        console.log('leftOffset')
+        let curLeft = leftOffset
+        let initPosReplacement = {}
+        for(let dot in this.initPos){
+          initPosReplacement[dot]={ left:curLeft, top:10 }
+          curLeft = curLeft + 129
+        }
+        this.initPos = {...initPosReplacement}
+
         // this.initStyle.emptyLogo =
 
 
@@ -154,7 +120,7 @@ export default {
         this.correctPositionData.red[0].id='red'
 
 
-            console.log('emptyLogo', emptyLogo)
+        console.log('emptyLogo', emptyLogo)
         console.log('leftOffset', leftOffset)
         console.log('topOffset', topOffset)
 
@@ -204,19 +170,97 @@ export default {
 
         this.correctPositionData.blk2 = [...this.correctPositionData.blk]
       },
+      setToInitPosition () {
+        this.style = {...this.initStyle}
+        this.positionsFilled = {
+          blu: false,
+          red: false,
+          grn: false,
+          blkl: false,
+          blkr: false,
+        }
+      },
+      dragStart(e) {
+        console.log('dragStarte', e)
+        this.calculateCursorOffset(e)
+       //  e.dataTransfer.setDragImage(img, 0, 0)
+        // e.preventDefault()
+        // console.log('height', bludot.height)
+        // console.log('width', bludot.width)
+        // console.log('drag starts...');
+      },
+      calculateCursorOffset(e){
+        this.cursorOffset = {left: this.initPos[e.target.id].left-e.x, top: this.initPos[e.target.id].top-e.y}
+        console.log('cursorOffset', this.cursorOffset)
+      },
+      handleDrag(e) {
+        // console.log('dragE', e)
+        // console.log('data', this.data)
+        // console.log('e.target.id', e.target.id)
+      },
+      handleDragEnd(e) {
+        // validate dot positioning
+       console.log('dragEndE', e)
+        let isCorrect = false
+        let positionId
+        // let imageReal
+        this.correctPositionData[e.target.id].forEach(possibleLocation=>{
+          if (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
+            isCorrect = true
+            positionId = possibleLocation.id
+          }
+
+          //isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) || isCorrect
+
+
+          // if (isCorrect && (e.target.id === 'blk' || e.target.id === 'blk2')) {
+          //   isCorrect = !this.positionsFilled[possibleLocation.id]
+          // }
+          // console.log('possibleLocationx', possibleLocation.x)
+          // console.log('possibleLocationy', possibleLocation.y)
+          // console.log('e.x', e.x)
+          // console.log('e.y', e.y)
+        })
+        if (isCorrect) {
+          // e.preventDefault()
+          this.positionsFilled[positionId] = true
+          this.style[e.target.id] = this.endStyle[positionId]
+        }
+        console.log('isCorrect', isCorrect)
+        // return isCorrect
+
+      },
+      getDotDimensions(){
+        const bludot = document.querySelectorAll('.blu')[0]
+        this.dotRad = bludot.width / 2
+      },
+      getLogoDimensions(){
+        // const emptyLogo = document.querySelectorAll('.empty-logo')
+        // const logoWidth = emptyLogo[0].width
+        // console.log('logoWidth', logoWidth)
+        //
+        // this.style.emptyLogo = `position: absolute; left: 50%; margin-left:-${logoWidth/2}px; top: 130px`
+
+
+      },
+
       //setupLocation({topOffset, leftOffset,)
       handleResize() {
         this.getCorrectLocations()
         // move correct dots to correct place
+      },
+      updateIndividualLocation({topOffset, leftOffset}){
+
       }
     },
 
     mounted () {
       //get location of dots final state
 
-
+      this.mounted = true
       this.getDotDimensions()
       this.getCorrectLocations()
+      this.setToInitPosition()
       window.addEventListener('resize', this.handleResize)
 
 
@@ -239,7 +283,7 @@ export default {
 </script>
 <template>
   <div class="app-wrapper">
-    {{dotRad}}
+    {{initStyle}}
     <div>
       <img class="blu dot" ref="blu" id="blu" :style="style.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
       <img class="red dot" ref="red" id="red" :style="style.red" draggable="true" src="@/ia-logo-dot-red.png" />
@@ -249,9 +293,9 @@ export default {
 <!--      <button @click="moveTest" />-->
     </div>
     <div>
-      <img class="empty-logo" id="logo" :style="style.emptyLogo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
+      <img class="empty-logo" id="logo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
     </div>
-    <button class="reset-btn"  @click="resetPositions()">Reset </button>
+    <button class="reset-btn"  @click="setToInitPosition()">Reset </button>
   </div>
 </template>
 
@@ -273,14 +317,12 @@ export default {
   .reset-btn {
 
   }
-  /*.empty-logo {*/
-  /*  margin-top: 103px;*/
-  /*  margin-left: 2px;*/
-  /*  !*left offset 10, top offset 130 for current numbers*!*/
-  /*  !*position: absolute;*!*/
-  /*  !*left: 10px;*!*/
-  /*  !*top: 130px;*!*/
-  /*}*/
+  .empty-logo {
+    position: absolute;
+    left: 50%;
+    margin-left:-300px;
+    top: 130px
+  }
 
 
 
