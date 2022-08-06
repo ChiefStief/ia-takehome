@@ -21,9 +21,8 @@ export default {
         blu: 'top: 177px; left:286px',
         red: 'top: 201px; left:466px',
         grn: 'top: 465px; left:153px',
-        //still need these two
-        blkl: 'top: 177px; left:286px',
-        blkr: 'top: 177px; left:286px',
+        blkl: 'top: 320px; left:56px',
+        blkr: 'top: 416px; left:430px',
       },
       positionsFilled: {
         blu: false,
@@ -33,11 +32,11 @@ export default {
         blkr: false,
       },
       correctPositionData: {
-        blu: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        grn: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        red: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        blk: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }, { x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        blk2: [{ x: { max:0, min:0 }, y: { max:0, min:0 } }, { x: { max:0, min:0 }, y: { max:0, min:0 } }]
+        blu: [{ id:'blu', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        grn: [{ id:'grn', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        red: [{ id:'red', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        blk: [{ id:'blkl', x: { max:0, min:0 }, y: { max:0, min:0 } }, { id:'blkr', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        blk2: [{ id:'blkl', x: { max:0, min:0 }, y: { max:0, min:0 } }, { id:'blkr', x: { max:0, min:0 }, y: { max:0, min:0 } }]
       }
     }
   },
@@ -76,19 +75,28 @@ export default {
         // validate dot positioning
        //  console.log('e.target.id', e.target.id)
         let isCorrect = false
+        let positionId
         this.correctPositionData[e.target.id].forEach(possibleLocation=>{
-          if (e.target.id === 'blk' ||e.target.id === 'blk2' ) {
-
+          if (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
+            isCorrect = true
+            positionId = possibleLocation.id
           }
+
+          //isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) || isCorrect
+
+
+          // if (isCorrect && (e.target.id === 'blk' || e.target.id === 'blk2')) {
+          //   isCorrect = !this.positionsFilled[possibleLocation.id]
+          // }
           // console.log('possibleLocationx', possibleLocation.x)
           // console.log('possibleLocationy', possibleLocation.y)
           // console.log('e.x', e.x)
           // console.log('e.y', e.y)
-          isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max) || isCorrect
         })
         if (isCorrect) {
           // e.preventDefault()
-          this.style[e.target.id] = this.endStyle[e.target.id]
+          this.positionsFilled[positionId] = true
+          this.style[e.target.id] = this.endStyle[positionId]
         }
         console.log('isCorrect', isCorrect)
         // return isCorrect
@@ -124,18 +132,27 @@ export default {
 
         this.correctPositionData.blu[0].x={max: 386+this.dotRad, min: 386-this.dotRad}
         this.correctPositionData.blu[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
+        this.correctPositionData.blu[0].id='blu'
 
         this.correctPositionData.grn[0].x={max: 270+this.dotRad, min: 270-this.dotRad}
         this.correctPositionData.grn[0].y={max: 466+this.dotRad, min: 466-this.dotRad}
+        this.correctPositionData.grn[0].id='grn'
+
 
         this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
         this.correctPositionData.red[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
+        this.correctPositionData.red[0].id='red'
+
 
         this.correctPositionData.blk[0].x={max: 473+this.dotRad, min: 473-this.dotRad}
         this.correctPositionData.blk[0].y={max: 457+this.dotRad, min: 457-this.dotRad}
+        this.correctPositionData.blk[0].id='blkr'
+
 
         this.correctPositionData.blk[1].x={max: 136+this.dotRad, min: 136-this.dotRad}
         this.correctPositionData.blk[1].y={max: 312+this.dotRad, min: 312-this.dotRad}
+        this.correctPositionData.blk[1].id='blkl'
+
 
         this.correctPositionData.blk2 = [...this.correctPositionData.blk]
 
