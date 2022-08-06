@@ -2,6 +2,7 @@
 export default {
   data () {
     return {
+      lastDragSpot: {},
       mounted: false,
       dotRad: 43,
       cursorOffset: {left:0, top:0},
@@ -95,9 +96,9 @@ export default {
 
         //could make function but would likely have to do math for where center is based on where clicked etc
 
-        //blu
-        this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
-        this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
+
+        this.correctPositionData.blu[0].x={max: leftOffset+276+this.dotRad, min: leftOffset+276-this.dotRad}
+        this.correctPositionData.blu[0].y={max: topOffset+47+this.dotRad, min: topOffset+47-this.dotRad}
         this.correctPositionData.blu[0].id='blu'
         this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
 
@@ -107,17 +108,31 @@ export default {
         this.correctPositionData.grn[0].id='grn'
         this.endStyle.grn = `top: ${topOffset+335}px; left:${leftOffset+143}px`
 
+
+
+        // //blu
+        // this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
+        // this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
+        // this.correctPositionData.blu[0].id='blu'
+        // this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
+        //
+        // //grn
+        // this.correctPositionData.grn[0].x={max: leftOffset+260+this.dotRad, min: leftOffset+260-this.dotRad}
+        // this.correctPositionData.grn[0].y={max: topOffset+336+this.dotRad, min: topOffset+336-this.dotRad}
+        // this.correctPositionData.grn[0].id='grn'
+        // this.endStyle.grn = `top: ${topOffset+335}px; left:${leftOffset+143}px`
+
         //Here
 
         //red
-        this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
-        this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
-        this.correctPositionData.blu[0].id='blu'
-        this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
-
-        this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
-        this.correctPositionData.red[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
-        this.correctPositionData.red[0].id='red'
+        // this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
+        // this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
+        // this.correctPositionData.blu[0].id='blu'
+        // this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
+        //
+        // this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
+        // this.correctPositionData.red[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
+        // this.correctPositionData.red[0].id='red'
 
 
         console.log('emptyLogo', emptyLogo)
@@ -190,22 +205,20 @@ export default {
         // console.log('drag starts...');
       },
       calculateCursorOffset(e){
-        this.cursorOffset = {left: this.initPos[e.target.id].left-e.x, top: this.initPos[e.target.id].top-e.y}
+        this.cursorOffset = {left: e.x - this.initPos[e.target.id].left, top: e.y - this.initPos[e.target.id].top}
         console.log('cursorOffset', this.cursorOffset)
       },
       handleDrag(e) {
-        // console.log('dragE', e)
-        // console.log('data', this.data)
-        // console.log('e.target.id', e.target.id)
+        this.lastDragSpot = {left: e.x, top: e.y }
       },
       handleDragEnd(e) {
         // validate dot positioning
-       console.log('dragEndE', e)
         let isCorrect = false
         let positionId
-        // let imageReal
+        let imageRealX = this.lastDragSpot.left - this.cursorOffset.left
+        let imageRealY = this.lastDragSpot.top - this.cursorOffset.top
         this.correctPositionData[e.target.id].forEach(possibleLocation=>{
-          if (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
+          if (imageRealX>possibleLocation.x.min && imageRealX<possibleLocation.x.max && imageRealY>possibleLocation.y.min && imageRealY<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
             isCorrect = true
             positionId = possibleLocation.id
           }
@@ -270,8 +283,8 @@ export default {
         dot.addEventListener('drag', this.handleDrag)
         dot.addEventListener('dragend', this.handleDragEnd)
         dot.addEventListener('drop', this.handleDrop)
-
       });
+      document.addEventListener("mouseup", this.handleMouseUp)
 
       // document.ondragover = (e) => {
       //   if (draggedId === "logo") {
