@@ -9,6 +9,7 @@ export default {
       leftOffset:0,
       topOffset:0,
       doneColorIntervalId: null,
+      feedbackDoneColor: '',
       showFeedbackWrong: false,
       showFeedbackCorrect: false,
       showFeedbackDone: false,
@@ -37,7 +38,7 @@ export default {
   },
   computed: {
     isComplete(){
-      return Object.values(this.positionsFilled).every((v) => v === true)
+      return Object.values(this.positionsFilled).every((v) => !!v === true)
     },
     // leftOffset(){
     //   return this.mounted ? this.$refs.logo.offsetLeft : -1000
@@ -109,7 +110,6 @@ export default {
             id: pos,
             x: {max: this.correctRelativePos[pos].left+this.leftOffset+this.dropTolerance, min: this.correctRelativePos[pos].left+this.leftOffset-this.dropTolerance},
             y: {max: this.correctRelativePos[pos].top+this.topOffset+this.dropTolerance, min: this.correctRelativePos[pos].top+this.topOffset-this.dropTolerance}
-            // some bug with scrolling make sure to fix
           })
         })
       }
@@ -148,7 +148,6 @@ export default {
       // },
       handleDrag(e) {
         this.lastDragSpot = { left: e.x, top: e.y }
-
       },
       handleDragEnd(e) {
         let isCorrect = false
@@ -170,7 +169,11 @@ export default {
           }
           this.positionsFilled[positionId] = e.target.id
           this.dotLocations[e.target.id] = positionId
-          this.giveFeedbackCorrect()
+          if (!this.isComplete) {
+            this.giveFeedbackCorrect()
+          } else {
+            this.giveFeedbackDone()
+          }
         } else {
           this.giveFeedbackWrong()
         }
@@ -202,8 +205,17 @@ export default {
         dot.addEventListener('drag', this.handleDrag)
         dot.addEventListener('dragend', this.handleDragEnd)
       });
+    },
+    beforeDestroy () {
+      window.removeEventListener('resize', this.handleResize)
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach(dot => {
+        dot.removeEventListener('dragstart', this.dragStart)
+        dot.removeEventListener('drag', this.handleDrag)
+        dot.removeEventListener('dragend', this.handleDragEnd)
+      });
     }
-  }
+}
 </script>
 <template>
   <div class="app-wrapper">
@@ -211,10 +223,13 @@ export default {
       InspiringApps Logo Challenge
     </div>
     <div class="reset-btn-wrapper">
-      <div class="feedback-correct" v-if="showFeedbackCorrect">Nice!!</div>
+      <div class="feedback-left" >{{showFeedbackCorrect ? 'Nice!!' : ''}}{{showFeedbackDone ? 'You did it!!!' : ' '}}</div>
       <button class="reset-btn"  @click="setToInitPosition()">Reset </button>
-      <div class="feedback-wrong" v-if="showFeedbackWrong">Not Quite</div>
+      <div class="feedback-right" >{{showFeedbackWrong ? 'Not Quite' : ''}}{{showFeedbackDone ? 'You did it!!!' : ' '}}</div>
+<!--      <span class="feedback-wrong feedback-right" v-if="showFeedbackWrong">Not Quite</span>-->
+<!--      <span class="feedback-done feedback-right" v-if="showFeedbackDone">You did it!!!</span>-->
     </div>
+
     <div>
       <img class="blu dot" ref="blu" id="blu" :style="curStyle.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
       <img class="red dot" ref="red" id="red" :style="curStyle.red" draggable="true" src="@/ia-logo-dot-red.png" />
@@ -231,12 +246,26 @@ export default {
 
 
 <style scoped>
-
-/*  dynamically generate dots locations based off of logo image width*/
-
   .app-wrapper{
-    display: flex;
-    flex-direction: column;
+    min-width: 600px;
+  }
+
+  .feedback-correct{
+
+  }
+
+  .feedback-wrong{
+
+  }
+
+  .feedback-left {
+    flex-basis: 100px;
+    margin-right: 100px;
+  }
+
+  .feedback-right {
+    flex-basis: 100px;
+    margin-left: 100px;
   }
 
   .title{
@@ -250,20 +279,16 @@ export default {
     cursor: move;
   }
 
-  .reset-btn-wrapper {
-    display: flex;
-    justify-content: center;
+  .reset-btn-wrapper{
     padding-top: 10px;
+    display:flex;
+    justify-content: center;
   }
 
   .empty-logo {
     position: absolute;
     left: 50%;
     margin-left:-300px;
-    /*top: 130px;*/
-    top: 230px
+    top: 230px;
   }
-
-
-
 </style>
