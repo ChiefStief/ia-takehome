@@ -2,14 +2,14 @@
 export default {
   data () {
     return {
-      lastDragSpot: {},
+      lastDragSpot: { },
       mounted: false,
       dropTolerance: 50,
       cursorOffset: {left:0, top:0},
       leftOffset:0,
       topOffset:0,
+      colorGeneratorNum: 1,
       doneColorIntervalId: null,
-      feedbackDoneColor: '',
       showFeedbackWrong: false,
       showFeedbackCorrect: false,
       showFeedbackDone: false,
@@ -40,19 +40,6 @@ export default {
     isComplete(){
       return Object.values(this.positionsFilled).every((v) => !!v === true)
     },
-    // leftOffset(){
-    //   return this.mounted ? this.$refs.logo.offsetLeft : -1000
-    //   // const emptyLogo = document.querySelectorAll('.empty-logo')
-    //   // this.leftOffset = emptyLogo[0].offsetLeft
-    //   // this.topOffset = emptyLogo[0].offsetTop
-    // },
-    // topOffset(){
-    //   return this.mounted ? this.$refs.logo.offsetTop : -1000
-    //
-    // //   const emptyLogo = document.querySelectorAll('.empty-logo')
-    // //   this.leftOffset = emptyLogo[0].offsetLeft
-    // //   this.topOffset = emptyLogo[0].offsetTop
-    // },
     initPos(){
       if(!this.mounted) {
         return  ({
@@ -81,6 +68,10 @@ export default {
         }
       }
       return toReturn
+    },
+    feedBackDoneStyle(){
+      let colorArray = ['red', 'green', 'blue']
+      return `color: ${colorArray[this.colorGeneratorNum%3]}`
     },
     initStyle(){
       let toReturn = { }
@@ -122,7 +113,7 @@ export default {
         this.leftOffset = emptyLogo[0].offsetLeft
         this.topOffset = emptyLogo[0].offsetTop
       },
-      setToInitPosition () {
+      reset () {
         this.positionsFilled = {
           blu: null,
           red: null,
@@ -137,15 +128,12 @@ export default {
           blk: 'init',
           blk2: 'init'
         }
+        this.showFeedbackDone = false
+        clearInterval(this.doneColorIntervalId)
       },
       dragStart(e) {
         this.cursorOffset = {left: e.offsetX, top: e.offsetY}
-        // this.calculateCursorOffset(e)
       },
-      // calculateCursorOffset(e){
-      //   this.cursorOffset = {left: e.offsetX, top: e.offsetY}
-      //   // this.cursorOffset = {left: e.x - this.initPos[e.target.id].left, top: e.y - this.initPos[e.target.id].top}
-      // },
       handleDrag(e) {
         this.lastDragSpot = { left: e.x, top: e.y }
       },
@@ -183,7 +171,7 @@ export default {
       },
       giveFeedbackCorrect(){
         this.showFeedbackCorrect = true
-       setTimeout(()=>{this.showFeedbackCorrect=false}, 1000)
+        setTimeout(()=>{this.showFeedbackCorrect=false}, 1000)
       },
       giveFeedbackWrong(){
         this.showFeedbackWrong = true
@@ -191,8 +179,16 @@ export default {
       },
       giveFeedbackDone(){
         this.showFeedbackDone = true
-        this.doneColorIntervalId = setInterval(function () {element.innerHTML += "Hello"}, 5000)
+        let num = 0
+        this.doneColorIntervalId = setInterval(this.changeFeedBackDoneColor, 500)
       },
+      changeFeedBackDoneColor(){
+        if (this.colorGeneratorNum>300) {
+          clearInterval(this.doneColorIntervalId)
+        } else {
+          this.colorGeneratorNum = this.colorGeneratorNum + 1
+        }
+      }
     },
 
     mounted () {
@@ -223,11 +219,15 @@ export default {
       InspiringApps Logo Challenge
     </div>
     <div class="reset-btn-wrapper">
-      <div class="feedback-left" >{{showFeedbackCorrect ? 'Nice!!' : ''}}{{showFeedbackDone ? 'You did it!!!' : ' '}}</div>
-      <button class="reset-btn"  @click="setToInitPosition()">Reset </button>
-      <div class="feedback-right" >{{showFeedbackWrong ? 'Not Quite' : ''}}{{showFeedbackDone ? 'You did it!!!' : ' '}}</div>
-<!--      <span class="feedback-wrong feedback-right" v-if="showFeedbackWrong">Not Quite</span>-->
-<!--      <span class="feedback-done feedback-right" v-if="showFeedbackDone">You did it!!!</span>-->
+      <div class="feedback-blk">
+        <span v-if="showFeedbackCorrect" class="feedback-correct">Nice!!</span>
+        <span v-if="showFeedbackDone" :style="feedBackDoneStyle"> You did it!!! </span>
+      </div>
+      <button class="reset-btn"  @click="reset()">Reset </button>
+      <div class="feedback-blk">
+        <span v-if="showFeedbackWrong" class="feedback-wrong">Not Quite</span>
+        <span v-if="showFeedbackDone" :style="feedBackDoneStyle"> You did it!!! </span>
+      </div>
     </div>
 
     <div>
@@ -251,21 +251,17 @@ export default {
   }
 
   .feedback-correct{
-
+    color: green;
   }
 
   .feedback-wrong{
-
+    color: red
   }
 
-  .feedback-left {
+  .feedback-blk {
     flex-basis: 100px;
-    margin-right: 100px;
-  }
-
-  .feedback-right {
-    flex-basis: 100px;
-    margin-left: 100px;
+    margin: 0 100px 0 100px;
+    font-size: 18px;
   }
 
   .title{
