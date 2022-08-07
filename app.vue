@@ -31,11 +31,11 @@ export default {
       //   blkr: 'top: 416px; left:430px',
       // },
       positionsFilled: {
-        blu: false,
-        red: false,
-        grn: false,
-        blkl: false,
-        blkr: false,
+        blu: null,
+        red: null,
+        grn: null,
+        blkl: null,
+        blkr: null,
       },
       correctPositionRange: {
         // blu: [{ id:'blu', x: { max:0, min:0 }, y: { max:0, min:0 } }],
@@ -136,26 +136,16 @@ export default {
         }
       },
       dragStart(e) {
-        console.log('dragStarte', e)
         this.calculateCursorOffset(e)
-       //  e.dataTransfer.setDragImage(img, 0, 0)
-        // e.preventDefault()
-        // console.log('height', bludot.height)
-        // console.log('width', bludot.width)
-        // console.log('drag starts...');
       },
       calculateCursorOffset(e){
         this.cursorOffset = {left: e.offsetX, top: e.offsetY}
-
         // this.cursorOffset = {left: e.x - this.initPos[e.target.id].left, top: e.y - this.initPos[e.target.id].top}
-        console.log('cursorOffset', this.cursorOffset)
       },
       handleDrag(e) {
         this.lastDragSpot = { left: e.x, top: e.y }
       },
       handleDragEnd(e) {
-        console.log('edragEnd', e)
-        // validate dot positioning
         let isCorrect = false
         let positionId
         let imageRealX = this.lastDragSpot.left - this.cursorOffset.left
@@ -165,59 +155,33 @@ export default {
             isCorrect = true
             positionId = possibleLocation.id
           }
-
-          //isCorrect = (e.x>possibleLocation.x.min && e.x<possibleLocation.x.max && e.y>possibleLocation.y.min && e.y<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) || isCorrect
-
-
-          // if (isCorrect && (e.target.id === 'blk' || e.target.id === 'blk2')) {
-          //   isCorrect = !this.positionsFilled[possibleLocation.id]
-          // }
-          // console.log('possibleLocationx', possibleLocation.x)
-          // console.log('possibleLocationy', possibleLocation.y)
-          // console.log('e.x', e.x)
-          // console.log('e.y', e.y)
         })
         if (isCorrect) {
-          this.positionsFilled[positionId] = true
+          for (let pos in this.positionsFilled) {
+            if (this.positionsFilled[pos] === e.target.id){
+              this.positionsFilled[pos] = null
+            }
+          }
+          this.positionsFilled[positionId] = e.target.id
           this.style[e.target.id] = this.endStyle[positionId]
         }
-        console.log('isCorrect', isCorrect)
-        // return isCorrect
-
       },
       getDotDimensions(){
         const bludot = document.querySelectorAll('.blu')[0]
         this.dotRad = bludot.width / 2
       },
-      getLogoDimensions(){
-        // const emptyLogo = document.querySelectorAll('.empty-logo')
-        // const logoWidth = emptyLogo[0].width
-        // console.log('logoWidth', logoWidth)
-        //
-        // this.style.emptyLogo = `position: absolute; left: 50%; margin-left:-${logoWidth/2}px; top: 130px`
-
-
-      },
-      //setupLocation({topOffset, leftOffset,)
       handleResize() {
         this.getCorrectLocations()
         // move correct dots to correct place
-      },
-      updateIndividualLocation({topOffset, leftOffset}){
-
       }
     },
 
     mounted () {
-      //get location of dots final state
-
       this.mounted = true
       this.getDotDimensions()
       this.getCorrectLocations()
       this.setToInitPosition()
       window.addEventListener('resize', this.handleResize)
-
-
       const dots = document.querySelectorAll('.dot');
       dots.forEach(dot => {
         dot.addEventListener('dragstart', this.dragStart)
@@ -225,13 +189,6 @@ export default {
         dot.addEventListener('dragend', this.handleDragEnd)
         dot.addEventListener('drop', this.handleDrop)
       });
-      document.addEventListener("mouseup", this.handleMouseUp)
-
-      // document.ondragover = (e) => {
-      //   if (draggedId === "logo") {
-      //     e.preventDefault();
-      //   }
-      // }
     }
   }
 </script>
