@@ -12,13 +12,6 @@ export default {
       showFeedbackWrong: false,
       showFeedbackCorrect: false,
       showFeedbackDone: false,
-      // initPos: {
-      //   blu: { left: 10, top: 10 },
-      //   red: {left: 140, top: 10},
-      //   grn: {left: 270, top: 10},
-      //   blk: {left: 400, top: 10},
-      //   blk2: {left: 530, top: 10},
-      // },
       correctRelativePos:{
         blu: { dots:['blu'], left: 276, top: 47 },
         red: { dots:['red'], left: 456, top: 71},
@@ -83,8 +76,6 @@ export default {
         if(this.dotLocations[dot] === 'init'){
           toReturn[dot] = this.initStyle[dot]
         } else {
-          console.log('endStyle', this.endStyle)
-          console.log('this.dotLocations', this.dotLocations[dot])
           toReturn[dot] = this.endStyle[this.dotLocations[dot]]
         }
       }
@@ -126,46 +117,12 @@ export default {
     }
   },
     methods: {
-      // createCorrectPositionRanges(){
-      //   console.log('in here')
-      //   let newCorrectPositionRange = {
-      //     blu: [],
-      //     grn: [],
-      //     red: [],
-      //     blk: [],
-      //     blk2: []
-      //   }
-      //   for (let pos in this.correctRelativePos) {
-      //     this.correctRelativePos[pos].dots.forEach((dot)=>{
-      //       newCorrectPositionRange[dot].push({
-      //         id: pos,
-      //         x: {max: this.correctRelativePos[pos].left+this.leftOffset+this.dropTolerance, min: this.correctRelativePos[pos].left+this.leftOffset-this.dropTolerance},
-      //         y: {max: this.correctRelativePos[pos].top+this.topOffset+this.dropTolerance, min: this.correctRelativePos[pos].top+this.topOffset-this.dropTolerance}
-      //         // some bug with scrolling make sure to fix
-      //       })
-      //     })
-      //   }
-      //   this.correctPositionRange = {...newCorrectPositionRange}
-      // },
       setOffsets(){
         const emptyLogo = document.querySelectorAll('.empty-logo')
         this.leftOffset = emptyLogo[0].offsetLeft
         this.topOffset = emptyLogo[0].offsetTop
       },
-      getCorrectLocations(){
-        this.setEmptyLogoOffsets()
-        // let curLeft = this.leftOffset
-        // let initPosReplacement = {}
-        // for(let dot in this.initPos){
-        //   initPosReplacement[dot]={ left:curLeft, top:this.topOffset-120 }
-        //   curLeft = curLeft + 129
-        // }
-        // this.initPos = {...initPosReplacement}
-        // this.createCorrectPositionRanges()
-
-      },
       setToInitPosition () {
-        // this.style = {...this.initStyle}
         this.positionsFilled = {
           blu: null,
           red: null,
@@ -185,18 +142,20 @@ export default {
         this.cursorOffset = {left: e.offsetX, top: e.offsetY}
         // this.calculateCursorOffset(e)
       },
-      calculateCursorOffset(e){
-        this.cursorOffset = {left: e.offsetX, top: e.offsetY}
-        // this.cursorOffset = {left: e.x - this.initPos[e.target.id].left, top: e.y - this.initPos[e.target.id].top}
-      },
+      // calculateCursorOffset(e){
+      //   this.cursorOffset = {left: e.offsetX, top: e.offsetY}
+      //   // this.cursorOffset = {left: e.x - this.initPos[e.target.id].left, top: e.y - this.initPos[e.target.id].top}
+      // },
       handleDrag(e) {
         this.lastDragSpot = { left: e.x, top: e.y }
+
       },
       handleDragEnd(e) {
         let isCorrect = false
         let positionId
         let imageRealX = this.lastDragSpot.left - this.cursorOffset.left
-        let imageRealY = this.lastDragSpot.top - this.cursorOffset.top
+        let imageRealY = this.lastDragSpot.top - this.cursorOffset.top + window.scrollY
+
         this.correctPositionRange[e.target.id].forEach(possibleLocation=>{
           if (imageRealX>possibleLocation.x.min && imageRealX<possibleLocation.x.max && imageRealY>possibleLocation.y.min && imageRealY<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
             isCorrect = true
@@ -210,7 +169,6 @@ export default {
             }
           }
           this.positionsFilled[positionId] = e.target.id
-          // this.style[e.target.id] = this.endStyle[positionId]
           this.dotLocations[e.target.id] = positionId
           this.giveFeedbackCorrect()
         } else {
@@ -231,14 +189,12 @@ export default {
       giveFeedbackDone(){
         this.showFeedbackDone = true
         this.doneColorIntervalId = setInterval(function () {element.innerHTML += "Hello"}, 5000)
-      }
+      },
     },
 
     mounted () {
       this.mounted = true
-      // this.getDotDimensions()
       this.setOffsets()
-      // this.setToInitPosition()
       window.addEventListener('resize', this.handleResize)
       const dots = document.querySelectorAll('.dot');
       dots.forEach(dot => {
