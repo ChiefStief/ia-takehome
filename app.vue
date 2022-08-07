@@ -6,6 +6,8 @@ export default {
       mounted: false,
       dotRad: 43,
       cursorOffset: {left:0, top:0},
+      leftOffset:0,
+      topOffset:0,
       initPos: {
         blu: { left: 10, top: 10 },
         red: {left: 140, top: 10},
@@ -13,14 +15,21 @@ export default {
         blk: {left: 400, top: 10},
         blk2: {left: 530, top: 10},
       },
-      style: { },
-      endStyle: {
-        // blu: 'top: 177px; left:286px',
-        red: 'top: 201px; left:466px',
-        //grn: 'top: 465px; left:153px',
-        blkl: 'top: 320px; left:56px',
-        blkr: 'top: 416px; left:430px',
+      correctRelativePos:{
+        blu: { dots:['blu'], left: 276, top: 47 },
+        red: { dots:['red'], left: 456, top: 71},
+        grn: { dots:['grn'], left: 143, top: 335},
+        blkl: { dots:['blk', 'blk2'], left: 46, top: 190},
+        blkr: { dots:['blk', 'blk2'], left: 420, top: 286},
       },
+      style: { },
+      // endStyle: {
+      //   // blu: 'top: 177px; left:286px',
+      //   red: 'top: 201px; left:466px',
+      //   //grn: 'top: 465px; left:153px',
+      //   blkl: 'top: 320px; left:56px',
+      //   blkr: 'top: 416px; left:430px',
+      // },
       positionsFilled: {
         blu: false,
         red: false,
@@ -28,12 +37,12 @@ export default {
         blkl: false,
         blkr: false,
       },
-      correctPositionData: {
-        blu: [{ id:'blu', x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        grn: [{ id:'grn', x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        red: [{ id:'red', x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        blk: [{ id:'blkl', x: { max:0, min:0 }, y: { max:0, min:0 } }, { id:'blkr', x: { max:0, min:0 }, y: { max:0, min:0 } }],
-        blk2: [{ id:'blkl', x: { max:0, min:0 }, y: { max:0, min:0 } }, { id:'blkr', x: { max:0, min:0 }, y: { max:0, min:0 } }]
+      correctPositionRange: {
+        // blu: [{ id:'blu', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        // grn: [{ id:'grn', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        // red: [{ id:'red', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        // blk: [{ id:'blkl', x: { max:0, min:0 }, y: { max:0, min:0 } }, { id:'blkr', x: { max:0, min:0 }, y: { max:0, min:0 } }],
+        // blk2: [{ id:'blkl', x: { max:0, min:0 }, y: { max:0, min:0 } }, { id:'blkr', x: { max:0, min:0 }, y: { max:0, min:0 } }]
       }
     }
   },
@@ -56,7 +65,7 @@ export default {
     //   console.log('leftOffset')
     //   let curLeft = leftOffset
     //   let initPosReplacement = {}
-    //   for(let dot in this.correctPositionData){
+    //   for(let dot in this.correctPositionRange){
     //     initPosReplacement[dot]={ left:curLeft, top:10 }
     //     curLeft = curLeft + 129
     //   }
@@ -65,125 +74,56 @@ export default {
     initStyle(){
       let toReturn = { }
       for(let dot in this.initPos){
+        console.log('dot', dot)
         toReturn[dot] = `left:${this.initPos[dot].left}px; top:${this.initPos[dot].top}px;`
+      }
+      return toReturn
+    },
+    endStyle() {
+      let toReturn = {}
+      for (let location in this.correctRelativePos){
+        toReturn[location] = `left:${this.correctRelativePos[location].left+this.leftOffset}px; top:${this.correctRelativePos[location].top+this.topOffset}px;`
       }
       return toReturn
     }
   },
     methods: {
-
-      getCorrectLocations(){
+      createCorrectPositionRanges(){
+        console.log('in here')
+        let newCorrectPositionRange = {
+          blu: [],
+          grn: [],
+          red: [],
+          blk: [],
+          blk2: []
+        }
+        for (let pos in this.correctRelativePos) {
+          this.correctRelativePos[pos].dots.forEach((dot)=>{
+            newCorrectPositionRange[dot].push({
+              id: pos,
+              x: {max: this.correctRelativePos[pos].left+this.leftOffset+this.dotRad, min: this.correctRelativePos[pos].left+this.leftOffset-this.dotRad},
+              y: {max: this.correctRelativePos[pos].top+this.topOffset+this.dotRad, min: this.correctRelativePos[pos].top+this.topOffset-this.dotRad}
+            })
+          })
+        }
+        this.correctPositionRange = {...newCorrectPositionRange}
+      },
+      setEmptyLogoOffsets(){
         const emptyLogo = document.querySelectorAll('.empty-logo')
-        // const logoWidth = emptyLogo[0].width
-        //
-        // this.style.emptyLogo = `position: absolute; left: 50%; margin-left:-${logoWidth/2}px; top: 130px`
-
-
-
-        const leftOffset = emptyLogo[0].offsetLeft
-        const topOffset = emptyLogo[0].offsetTop
-        console.log('leftOffset')
-        let curLeft = leftOffset
+        this.leftOffset = emptyLogo[0].offsetLeft
+        this.topOffset = emptyLogo[0].offsetTop
+      },
+      getCorrectLocations(){
+        this.setEmptyLogoOffsets()
+        let curLeft = this.leftOffset
         let initPosReplacement = {}
         for(let dot in this.initPos){
           initPosReplacement[dot]={ left:curLeft, top:10 }
           curLeft = curLeft + 129
         }
         this.initPos = {...initPosReplacement}
+        this.createCorrectPositionRanges()
 
-        // this.initStyle.emptyLogo =
-
-
-        //could make function but would likely have to do math for where center is based on where clicked etc
-
-
-        this.correctPositionData.blu[0].x={max: leftOffset+276+this.dotRad, min: leftOffset+276-this.dotRad}
-        this.correctPositionData.blu[0].y={max: topOffset+47+this.dotRad, min: topOffset+47-this.dotRad}
-        this.correctPositionData.blu[0].id='blu'
-        this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
-
-        //grn
-        this.correctPositionData.grn[0].x={max: leftOffset+260+this.dotRad, min: leftOffset+260-this.dotRad}
-        this.correctPositionData.grn[0].y={max: topOffset+336+this.dotRad, min: topOffset+336-this.dotRad}
-        this.correctPositionData.grn[0].id='grn'
-        this.endStyle.grn = `top: ${topOffset+335}px; left:${leftOffset+143}px`
-
-
-
-        // //blu
-        // this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
-        // this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
-        // this.correctPositionData.blu[0].id='blu'
-        // this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
-        //
-        // //grn
-        // this.correctPositionData.grn[0].x={max: leftOffset+260+this.dotRad, min: leftOffset+260-this.dotRad}
-        // this.correctPositionData.grn[0].y={max: topOffset+336+this.dotRad, min: topOffset+336-this.dotRad}
-        // this.correctPositionData.grn[0].id='grn'
-        // this.endStyle.grn = `top: ${topOffset+335}px; left:${leftOffset+143}px`
-
-        //Here
-
-        //red
-        // this.correctPositionData.blu[0].x={max: leftOffset+376+this.dotRad, min: leftOffset+376-this.dotRad}
-        // this.correctPositionData.blu[0].y={max: topOffset+64+this.dotRad, min: topOffset+64-this.dotRad}
-        // this.correctPositionData.blu[0].id='blu'
-        // this.endStyle.blu = `top: ${topOffset+47}px; left:${leftOffset+276}px`
-        //
-        // this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
-        // this.correctPositionData.red[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
-        // this.correctPositionData.red[0].id='red'
-
-
-        console.log('emptyLogo', emptyLogo)
-        console.log('leftOffset', leftOffset)
-        console.log('topOffset', topOffset)
-
-
-
-        // look into whether this has bad perf side effects
-
-        // rightTop-red:
-        // x: 558
-        // y: 194
-        // rightBottom-blk:
-        // x: 473
-        // y: 457
-        //middle-blu
-        // x: 386
-        // y: 194
-        // top left-blk
-        // x: 136
-        // y: 312
-        // bottom left-grn
-        // x: 270
-        // y: 466
-
-        // this.correctPositionData.blu[0].x={max: 386+this.dotRad, min: 386-this.dotRad}
-        // this.correctPositionData.blu[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
-        // this.correctPositionData.blu[0].id='blu'
-
-        // this.correctPositionData.grn[0].x={max: 270+this.dotRad, min: 270-this.dotRad}
-        // this.correctPositionData.grn[0].y={max: 466+this.dotRad, min: 466-this.dotRad}
-        // this.correctPositionData.grn[0].id='grn'
-
-
-        this.correctPositionData.red[0].x={max: 558+this.dotRad, min: 558-this.dotRad}
-        this.correctPositionData.red[0].y={max: 194+this.dotRad, min: 194-this.dotRad}
-        this.correctPositionData.red[0].id='red'
-
-
-        this.correctPositionData.blk[0].x={max: 493+this.dotRad, min: 493-this.dotRad}
-        this.correctPositionData.blk[0].y={max: 410+this.dotRad, min: 410-this.dotRad}
-        this.correctPositionData.blk[0].id='blkr'
-
-
-        this.correctPositionData.blk[1].x={max: 136+this.dotRad, min: 136-this.dotRad}
-        this.correctPositionData.blk[1].y={max: 312+this.dotRad, min: 312-this.dotRad}
-        this.correctPositionData.blk[1].id='blkl'
-
-
-        this.correctPositionData.blk2 = [...this.correctPositionData.blk]
       },
       setToInitPosition () {
         this.style = {...this.initStyle}
@@ -205,19 +145,22 @@ export default {
         // console.log('drag starts...');
       },
       calculateCursorOffset(e){
-        this.cursorOffset = {left: e.x - this.initPos[e.target.id].left, top: e.y - this.initPos[e.target.id].top}
+        this.cursorOffset = {left: e.offsetX, top: e.offsetY}
+
+        // this.cursorOffset = {left: e.x - this.initPos[e.target.id].left, top: e.y - this.initPos[e.target.id].top}
         console.log('cursorOffset', this.cursorOffset)
       },
       handleDrag(e) {
-        this.lastDragSpot = {left: e.x, top: e.y }
+        this.lastDragSpot = { left: e.x, top: e.y }
       },
       handleDragEnd(e) {
+        console.log('edragEnd', e)
         // validate dot positioning
         let isCorrect = false
         let positionId
         let imageRealX = this.lastDragSpot.left - this.cursorOffset.left
         let imageRealY = this.lastDragSpot.top - this.cursorOffset.top
-        this.correctPositionData[e.target.id].forEach(possibleLocation=>{
+        this.correctPositionRange[e.target.id].forEach(possibleLocation=>{
           if (imageRealX>possibleLocation.x.min && imageRealX<possibleLocation.x.max && imageRealY>possibleLocation.y.min && imageRealY<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
             isCorrect = true
             positionId = possibleLocation.id
@@ -235,7 +178,6 @@ export default {
           // console.log('e.y', e.y)
         })
         if (isCorrect) {
-          // e.preventDefault()
           this.positionsFilled[positionId] = true
           this.style[e.target.id] = this.endStyle[positionId]
         }
@@ -256,7 +198,6 @@ export default {
 
 
       },
-
       //setupLocation({topOffset, leftOffset,)
       handleResize() {
         this.getCorrectLocations()
@@ -296,7 +237,6 @@ export default {
 </script>
 <template>
   <div class="app-wrapper">
-    {{initStyle}}
     <div>
       <img class="blu dot" ref="blu" id="blu" :style="style.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
       <img class="red dot" ref="red" id="red" :style="style.red" draggable="true" src="@/ia-logo-dot-red.png" />
