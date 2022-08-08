@@ -48,9 +48,9 @@ At this point I noticed that the dragEnd hook reported your cursor's location an
 **Reset Button**
 I added in saving the initial location data separately so that it could be referenced when clicking reset.
 
-##Refining
+## Refining
 
-**Centering and using relative absolute positioning**  
+#### Centering and using relative absolute positioning 
 I was unsatisfied that the whole app was haphazardly placed on the left side of the screen. I centered the app by centering the incomplete logo image and then generating every absolute position and style at the same position relative to that image as before. I prefer both the look of the centered logo and the app being less hardcoded.
 
 **Drag click Offset implementation**
