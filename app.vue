@@ -37,10 +37,10 @@ export default {
     }
   },
   computed: {
-    isComplete(){
+    isComplete() {
       return Object.values(this.positionsFilled).every((v) => !!v === true)
     },
-    initPos(){
+    initPos() {
       if(!this.mounted) {
         return  ({
           blu: { left: 10, top: -100 },
@@ -58,7 +58,7 @@ export default {
       }
       return initPosReplacement
     },
-    curStyle(){
+    curStyle() {
       let toReturn = {}
       for (let dot in this.dotLocations){
         if(this.dotLocations[dot] === 'init'){
@@ -69,11 +69,11 @@ export default {
       }
       return toReturn
     },
-    feedBackDoneStyle(){
+    feedBackDoneStyle() {
       let colorArray = ['red', 'green', 'blue']
       return `color: ${colorArray[this.colorGeneratorNum%3]}`
     },
-    initStyle(){
+    initStyle() {
       let toReturn = { }
       for(let dot in this.initPos){
         toReturn[dot] = `left:${this.initPos[dot].left}px; top:${this.initPos[dot].top}px;`
@@ -108,12 +108,12 @@ export default {
     }
   },
     methods: {
-      setOffsets(){
+      setOffsets() {
         const emptyLogo = document.getElementById('logo')
         this.leftOffset = emptyLogo.offsetLeft
         this.topOffset = emptyLogo.offsetTop
       },
-      reset () {
+      reset() {
         this.positionsFilled = {
           blu: null,
           red: null,
@@ -132,7 +132,7 @@ export default {
         clearInterval(this.doneColorIntervalId)
       },
       dragStart(e) {
-        this.cursorOffset = {left: e.offsetX, top: e.offsetY}
+        this.cursorOffset = { left: e.offsetX, top: e.offsetY }
       },
       handleDrag(e) {
         this.lastDragSpot = { left: e.x, top: e.y }
@@ -143,8 +143,8 @@ export default {
         let imageRealX = this.lastDragSpot.left - this.cursorOffset.left
         let imageRealY = this.lastDragSpot.top - this.cursorOffset.top + window.scrollY
 
-        this.correctPositionRange[e.target.id].forEach(possibleLocation=>{
-          if (imageRealX>possibleLocation.x.min && imageRealX<possibleLocation.x.max && imageRealY>possibleLocation.y.min && imageRealY<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
+        this.correctPositionRange[e.target.id].forEach(possibleLocation => {
+          if (imageRealX > possibleLocation.x.min && imageRealX<possibleLocation.x.max && imageRealY>possibleLocation.y.min && imageRealY<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
             isCorrect = true
             positionId = possibleLocation.id
           }
@@ -169,19 +169,19 @@ export default {
       handleResize() {
         this.setOffsets()
       },
-      giveFeedbackCorrect(){
+      giveFeedbackCorrect() {
         this.showFeedbackCorrect = true
-        setTimeout(()=>{this.showFeedbackCorrect=false}, 1000)
+        setTimeout(()=> { this.showFeedbackCorrect = false }, 1000)
       },
-      giveFeedbackWrong(){
+      giveFeedbackWrong() {
         this.showFeedbackWrong = true
-        setTimeout(() => {this.showFeedbackWrong=false}, 1000)
+        setTimeout(() => { this.showFeedbackWrong = false }, 1000)
       },
-      giveFeedbackDone(){
+      giveFeedbackDone() {
         this.showFeedbackDone = true
         this.doneColorIntervalId = setInterval(this.changeFeedBackDoneColor, 500)
       },
-      changeFeedBackDoneColor(){
+      changeFeedBackDoneColor() {
         if (this.colorGeneratorNum>300) {
           clearInterval(this.doneColorIntervalId)
         } else {
@@ -190,7 +190,7 @@ export default {
       }
     },
 
-    mounted () {
+    mounted() {
       this.mounted = true
       this.setOffsets()
       window.addEventListener('resize', this.handleResize)
@@ -201,7 +201,7 @@ export default {
         dot.addEventListener('dragend', this.handleDragEnd)
       });
     },
-    beforeDestroy () {
+    beforeDestroy() {
       clearInterval(this.doneColorIntervalId)
       window.removeEventListener('resize', this.handleResize)
       const dots = document.querySelectorAll('.dot');
@@ -221,15 +221,14 @@ export default {
     <div class="reset-btn-wrapper">
       <div class="feedback-blk">
         <span v-if="showFeedbackCorrect" class="feedback-correct">Nice!!</span>
-        <span v-if="showFeedbackDone" :style="feedBackDoneStyle"> You did it!!! </span>
+        <span v-if="showFeedbackDone" :style="feedBackDoneStyle">You did it!!!</span>
       </div>
       <button class="reset-btn"  @click="reset()">Reset </button>
       <div class="feedback-blk">
         <span v-if="showFeedbackWrong" class="feedback-wrong">Not Quite</span>
-        <span v-if="showFeedbackDone" :style="feedBackDoneStyle"> You did it!!! </span>
+        <span v-if="showFeedbackDone" :style="feedBackDoneStyle">You did it!!!</span>
       </div>
     </div>
-
     <div>
       <img class="blu dot" id="blu" :style="curStyle.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
       <img class="red dot" id="red" :style="curStyle.red" draggable="true" src="@/ia-logo-dot-red.png" />
@@ -240,21 +239,20 @@ export default {
     <div>
       <img class="empty-logo" id="logo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
     </div>
-
   </div>
 </template>
 
 
 <style scoped>
-  .app-wrapper{
+  .app-wrapper {
     min-width: 600px;
   }
 
-  .feedback-correct{
+  .feedback-correct {
     color: green;
   }
 
-  .feedback-wrong{
+  .feedback-wrong {
     color: red
   }
 
@@ -264,27 +262,27 @@ export default {
     font-size: 18px;
   }
 
-  .title{
+  .title {
     text-align: center;
     font-size: 48px;
   }
 
-  .dot{
+  .dot {
     position: absolute;
     z-index: 10;
     cursor: move;
   }
 
-  .reset-btn-wrapper{
+  .reset-btn-wrapper {
     padding-top: 10px;
-    display:flex;
+    display: flex;
     justify-content: center;
   }
 
   #logo {
     position: absolute;
     left: 50%;
-    margin-left:-300px;
+    margin-left: -300px;
     top: 230px;
   }
 </style>
