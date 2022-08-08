@@ -1,6 +1,6 @@
 # My Solution Journey
 
-I try to present my process below in chronological order. Truthfully, I am a little embarassed at how scattered and random the process was and some of the suboptimal design decsions I made along the way. Likely any problem that involves reseach, unknowns and many choices ends up being somewwat scattered when produced chronologically like this. I suppose that's why we refactor, but I also think this is an interesting practice in self awareness and presents oppurtunity to improve.
+I try to present my process below in chronological order. Truthfully, I am a little embarassed at how scattered and random the process was and some of the suboptimal design decsions I made along the way. Likely any problem that involves reseach, unknowns and many choices ends up being somewwat scattered when produced chronologically like this. I suppose that's why we refactor, but I also think this is an interesting practice in self awareness and presents opportunity to improve.
 
 ## First Thoughts
 
@@ -9,7 +9,7 @@ When initially looking at the problem it occurred to me that there were a few pr
 2) I needed to make the images move with the mouse as I dragged them
 3) I needed to figure out a way to validate the location that I was dropping the images against the correct location
 
-To tackle number 1 my immediate thought was to do onMouseDown and onMouseUpEvent handlers because I had used these before. My first thought to make the images follow the mouse was to use an animation library I had used before and track my mouse movements. I decided to initially manually test and find the correct location for the dots. I was not thrilled about this solution but I did not immediately come up with anything better and I needed to get this part to validate the rest. 
+To tackle number 1 my immediate thought was to do onMouseDown and onMouseUp event handlers because I had used these before. My first thought to make the images follow the mouse was to use an animation library I had used before and track my mouse movements. I decided to initially manually test and find the correct location for the dots. I was not thrilled about this solution but I did not immediately come up with anything better and I needed to get this part to validate the rest. 
 At this moment I had a random and fleeting worry about how the dot would look at the end if it was placed correctly: would it awkwardly snap to the absolute correct position? I thought it might be worth doing a smooth transition to the correct spot. I was aware that there needed to be some tolerance for a "correct" drop for any consistent peformance, but of course the dot needed to end up in the perfect location.  Finally, I decided I wanted to use css on the initial dots such that dragging one did not disturb the others, at this point I started using position: absolute for the dots' css.
 
 ## Diving In and Manual Validation
@@ -37,7 +37,7 @@ Inputting my manually found values I validated that my algorithm for determining
 My previous drop zone validation work was not precise enough to tell me what the perfect final location was that the dots should end in. I opened up DevTools and manually edited the absolute positioning data until the circles were perfectly centered and recorded those numbers. These numbers became the final position and styling that the dots would snap to if correct.
 
 ####Snap to Absolute Positioning and handleDrag vs default behaviour
-Without doing anything, the browser gives you a shadow of the item you are dragging around. Updating my dots' position with every drag required re-rendering on every drag event, and there were a tremendous amount. Because of these facts I decided it was best just to go with the browser drag preview. The only problem with this was that the default behavior has the preview snap back to its original position. If the drop was in the right place the dot would then appear back where it had been dragged to, ultimately looking terrible. As such I spent some time (an annoying amount) figuring out how to not do this and ultimately added in ondragover="event.preventDefault()" which makes the image not snap back. Now that the image did not snap back and just clicked into place I saw that this was not jarring and my initial random fear was unfounded. Fortunately, doing less was more in this case.
+Without doing anything, the browser gives you a shadow of the item you are dragging around. Updating my dots' position with every drag required re-rendering on every drag event, and there were a tremendous amount. Because of these facts I decided it was best just to go with the browser drag preview. The only problem with this was that the default behavior has the preview snap back to its original position on drag end. If the drop was in the right place the dot would then appear back where it had been dragged to, ultimately looking terrible. As such I spent some time (an annoying amount) figuring out how to not do this and ultimately added in ```ondragover="event.preventDefault()"``` which makes the image not snap back. Now that the image did not snap back and just clicked into place I saw that this was not jarring and my initial random fear was unfounded. Fortunately, doing less was more in this case.
 
 ####Handling Black Dot Complexity
 I added Ids to the correct position data to help distinguish between the two different locations the black dots could end up and determine if a position had been filled. I then added this to my correctness algorithm so that two black dots could not end up in the same place.
@@ -50,6 +50,7 @@ At this point I noticed that the dragEnd hook reported your cursor's location an
 ####Centering and using relative absolute positioning
 I was unsatisfied that the whole app was hap-hazardly placed on the left side of the screen. I centered the app by centering the incomplete logo image and then generating every absolute position and style at the same position relative to that image as before. I prefer both the look of the centered logo and the app being less hardcoded.
 
+####Refactoring to use Computed More
 
 
 #####HandleDragEnd innacuracy and handleDrag hack
@@ -62,9 +63,13 @@ I was unsatisfied that the whole app was hap-hazardly placed on the left side of
 ####handleResize
 
 ####Title and Scroll Bug
+I added a title to the 
 
-####Refactoring to use Computed More
 
+####Refactoring to use Computed More again but with a twist
+
+
+####User Feedback
 
 
 
@@ -76,19 +81,5 @@ Ultimately, I decided to just use the number that I would get from looking up th
 
 ```bash
 npm run dev
-```
-
-## Refactoring
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
 ```
 
