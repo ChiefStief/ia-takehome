@@ -50,19 +50,19 @@ I added in saving the initial location data separately so that it could be refer
 
 ## Refining
 
-#### Centering and using relative absolute positioning 
+**Centering and using relative absolute positioning**  
 I was unsatisfied that the whole app was haphazardly placed on the left side of the screen. I centered the app by centering the incomplete logo image and then generating every absolute position and style at the same position relative to that image as before. I prefer both the look of the centered logo and the app being less hardcoded.
 
-**Drag click Offset implementation**
+**Drag click Offset implementation**  
 At this point I decided I needed to bite the bullet and implement the drag click offset to accurately determine where a dot had been dropped. I initially wanted to use the pythagorean thereom / 45-45 right triangles to find the click offset from the center of the dot using the initial click offset from dragStart. I almost immediately realized I was over-complicating this because the final relative absolute position css that I had recorded and was going to use referred to the location of the top left corner of the dot as well. This means that I would have to translate the coordinates in to be centered on the dot center and then back out to where they started. Leaving the coordinate system to use the upper left corner of the origin meant I was able to do none of this translating, despite the fact that it is harder to think about the dots visual location by using their upper left corner as the origin. I then added this offset to the correctness algorithm.
 
-**Handle dragEnd innacuracy and handleDrag hack**
+**Handle dragEnd innacuracy and handleDrag hack**  
 Once I was sure I had implemented the drag click offset correctly I expected the correctness logic to be complete and the project to work consistently. Unfortunately, the readings coming from the coordinates of dragEnd were very inconsistent. I scoured over the properties on the event but was unable to find a set of properties that could combine or be individually used to consistently locate the dragEnd. At this point one option I had was to make my correctness tolerances very wide so that there were no false negatives but create what I believed to be a too tolerant a correct drop zone. I found this unacceptable and generally not good enough, also this would completely defeat the purpose of using the radius for drop tolerance or the work I just did to incorporate the click offSet. I looked into bringing back the onMouseUp event handler but was having inconsistent firings while ending a drag. Ultimately, I went with recording the current location while dragging using handleDrag and then onDragEnd using that location as it would stop updating when the dragEnd and so the recorded current position was implicitly where the drag had ended. I am not thrilled with the solution because I am updating data very rapidly when I only need the last update.
 
 **Refactoring to use Computed More**
 I began to refactor my variable styles and positions that were consistently defined the same way to be computed properties rather than updating the state with a function. Functionally, these things were almost identical but it was wasteful to have to define and call a function when computed handles these updates.
 
-##Finishing Up and Refactoring
+## Finishing Up and Refactoring
 
 **Allow black swap**  
 The way I had implemented the solution up to this point allowed for the user to move one black dot from one possible correct location to the other but would then block that previous location from being accessed. I updated my solution to track which dots are filling which positions and to allow for this swap to take place. Truthfully, I am ambivalent to allowing swapping at all, the other option is to simply not allow dragging when the dot is placed, this would produce a more consistent experience across the dots as the other dots cannot swap due to not having two correct locations. 
