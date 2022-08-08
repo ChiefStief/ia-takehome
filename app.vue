@@ -1,5 +1,7 @@
 <script>
+import Dot from "./components/dot"
 export default {
+  components: { Dot },
   data () {
     return {
       lastDragSpot: { },
@@ -34,11 +36,22 @@ export default {
         blk: 'init',
         blk2: 'init'
       },
+      dotSrcs: {
+        blu: '/ia-logo-dot-blue.png',
+        grn: '/ia-logo-dot-green.png',
+        red: '/ia-logo-dot-red.png',
+        blk: '/ia-logo-dot-black.png',
+        blk2: '/ia-logo-dot-black.png'
+      },
     }
   },
   computed: {
     isComplete(){
       return Object.values(this.positionsFilled).every((v) => !!v === true)
+    },
+    feedBackDoneStyle(){
+      let colorArray = ['red', 'green', 'blue']
+      return `color: ${colorArray[this.colorGeneratorNum%3]}`
     },
     initPos(){
       if(!this.mounted) {
@@ -58,28 +71,24 @@ export default {
       }
       return initPosReplacement
     },
-    curStyle(){
-      let toReturn = {}
-      for (let dot in this.dotLocations){
-        if(this.dotLocations[dot] === 'init'){
-          toReturn[dot] = this.initStyle[dot]
-        } else {
-          toReturn[dot] = this.endStyle[this.dotLocations[dot]]
-        }
-      }
-      return toReturn
-    },
-    feedBackDoneStyle(){
-      let colorArray = ['red', 'green', 'blue']
-      return `color: ${colorArray[this.colorGeneratorNum%3]}`
-    },
-    initStyle(){
-      let toReturn = { }
-      for(let dot in this.initPos){
-        toReturn[dot] = `left:${this.initPos[dot].left}px; top:${this.initPos[dot].top}px;`
-      }
-      return toReturn
-    },
+    // curStyle(){
+    //   let toReturn = {}
+    //   for (let dot in this.dotLocations){
+    //     if(this.dotLocations[dot] === 'init'){
+    //       toReturn[dot] = this.initStyle[dot]
+    //     } else {
+    //       toReturn[dot] = this.endStyle[this.dotLocations[dot]]
+    //     }
+    //   }
+    //   return toReturn
+    // },
+    // initStyle(){
+    //   let toReturn = { }
+    //   for(let dot in this.initPos){
+    //     toReturn[dot] = `left:${this.initPos[dot].left}px; top:${this.initPos[dot].top}px;`
+    //   }
+    //   return toReturn
+    // },
     endStyle() {
       let toReturn = {}
       for (let location in this.correctRelativePos){
@@ -194,12 +203,12 @@ export default {
       this.mounted = true
       this.setOffsets()
       window.addEventListener('resize', this.handleResize)
-      const dots = document.querySelectorAll('.dot');
-      dots.forEach(dot => {
-        dot.addEventListener('dragstart', this.dragStart)
-        dot.addEventListener('drag', this.handleDrag)
-        dot.addEventListener('dragend', this.handleDragEnd)
-      });
+      // const dots = document.querySelectorAll('.dot');
+      // dots.forEach(dot => {
+      //   dot.addEventListener('dragstart', this.dragStart)
+      //   dot.addEventListener('drag', this.handleDrag)
+      //   dot.addEventListener('dragend', this.handleDragEnd)
+      // });
     },
     beforeDestroy () {
       clearInterval(this.doneColorIntervalId)
@@ -231,11 +240,20 @@ export default {
     </div>
 
     <div>
-      <img class="blu dot" id="blu" :style="curStyle.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
-      <img class="red dot" id="red" :style="curStyle.red" draggable="true" src="@/ia-logo-dot-red.png" />
-      <img class="grn dot" id="grn" :style="curStyle.grn" draggable="true" src="@/ia-logo-dot-green.png" />
-      <img class="blk dot" id="blk" :style="curStyle.blk" draggable="true" src="@/ia-logo-dot-black.png" />
-      <img class="blk2 dot" id="blk2" :style="curStyle.blk2" draggable="true" src="@/ia-logo-dot-black.png" />
+      <dot
+        v-for="(value, key) in dotSrcs"
+        :id="key"
+        :src="value"
+        :init-pos="initPos"
+        :left-offset="leftOffset"
+        :top-offset="topOffset"
+        :end-style="endStyle"
+      />
+<!--      <img class="blu dot" id="blu" :style="curStyle.blu" draggable="true" src="@/ia-logo-dot-blue.png" />-->
+<!--      <img class="red dot" id="red" :style="curStyle.red" draggable="true" src="@/ia-logo-dot-red.png" />-->
+<!--      <img class="grn dot" id="grn" :style="curStyle.grn" draggable="true" src="@/ia-logo-dot-green.png" />-->
+<!--      <img class="blk dot" id="blk" :style="curStyle.blk" draggable="true" src="@/ia-logo-dot-black.png" />-->
+<!--      <img class="blk2 dot" id="blk2" :style="curStyle.blk2" draggable="true" src="@/ia-logo-dot-black.png" />-->
     </div>
     <div>
       <img class="empty-logo" id="logo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
