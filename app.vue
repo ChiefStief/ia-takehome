@@ -231,11 +231,11 @@ export default {
     </div>
 
     <div>
-      <img class="blu dot" ref="blu" id="blu" :style="curStyle.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
-      <img class="red dot" ref="red" id="red" :style="curStyle.red" draggable="true" src="@/ia-logo-dot-red.png" />
-      <img class="grn dot" ref="grn" id="grn" :style="curStyle.grn" draggable="true" src="@/ia-logo-dot-green.png" />
-      <img class="blk dot" ref="blk" id="blk" :style="curStyle.blk" draggable="true" src="@/ia-logo-dot-black.png" />
-      <img class="blk2 dot" ref="blk2" id="blk2" :style="curStyle.blk2" draggable="true" src="@/ia-logo-dot-black.png" />
+      <img class="blu dot" id="blu" :style="curStyle.blu" draggable="true" src="@/ia-logo-dot-blue.png" />
+      <img class="red dot" id="red" :style="curStyle.red" draggable="true" src="@/ia-logo-dot-red.png" />
+      <img class="grn dot" id="grn" :style="curStyle.grn" draggable="true" src="@/ia-logo-dot-green.png" />
+      <img class="blk dot" id="blk" :style="curStyle.blk" draggable="true" src="@/ia-logo-dot-black.png" />
+      <img class="blk2 dot" id="blk2" :style="curStyle.blk2" draggable="true" src="@/ia-logo-dot-black.png" />
     </div>
     <div>
       <img class="empty-logo" id="logo" ondragover="event.preventDefault()" ref="logo" src="@/ia-logo-back.png" />
