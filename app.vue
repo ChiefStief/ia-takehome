@@ -109,9 +109,9 @@ export default {
   },
     methods: {
       setOffsets(){
-        const emptyLogo = document.querySelectorAll('.empty-logo')
-        this.leftOffset = emptyLogo[0].offsetLeft
-        this.topOffset = emptyLogo[0].offsetTop
+        const emptyLogo = document.getElementById('logo')
+        this.leftOffset = emptyLogo.offsetLeft
+        this.topOffset = emptyLogo.offsetTop
       },
       reset () {
         this.positionsFilled = {
@@ -179,7 +179,6 @@ export default {
       },
       giveFeedbackDone(){
         this.showFeedbackDone = true
-        let num = 0
         this.doneColorIntervalId = setInterval(this.changeFeedBackDoneColor, 500)
       },
       changeFeedBackDoneColor(){
@@ -203,6 +202,7 @@ export default {
       });
     },
     beforeDestroy () {
+      clearInterval(this.doneColorIntervalId)
       window.removeEventListener('resize', this.handleResize)
       const dots = document.querySelectorAll('.dot');
       dots.forEach(dot => {
@@ -281,7 +281,7 @@ export default {
     justify-content: center;
   }
 
-  .empty-logo {
+  #logo {
     position: absolute;
     left: 50%;
     margin-left:-300px;

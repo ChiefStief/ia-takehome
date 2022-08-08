@@ -1,8 +1,13 @@
-# Nuxt 3 Minimal Starter
+# My Solution Journey
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+## First Thoughts
 
-## Setup
+When initially looking at the problem it occurred to me that there were a few problems that needed to be solved:
+1)I needed to track where the images were
+2)dfsdfsd
+
+
+The first thing that occurred to me was to use onMouseDown and onMouseUp event handlers to figure out where on the screen
 
 Make sure to install the dependencies:
 
@@ -17,7 +22,9 @@ npm install
 pnpm install --shamefully-hoist
 ```
 
-## Development Server
+## Diving In
+
+####Validating DragEnd and Absolute Positioning approach 1)
 
 Start the development server on http://localhost:3000
 
@@ -25,7 +32,7 @@ Start the development server on http://localhost:3000
 npm run dev
 ```
 
-## Production
+## Refactoring
 
 Build the application for production:
 
@@ -39,4 +46,3 @@ Locally preview production build:
 npm run preview
 ```
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
