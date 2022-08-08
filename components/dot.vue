@@ -51,14 +51,41 @@ export default {
     }
   },
   methods: {
-    dragStart(){
-      console.log('dragStart')
+    handleDragStart(e) {
+      // this.$store.commit('UPDATE_CURSOR_OFFSET', {left: e.offsetX, top: e.offsetY})
+
     },
-    handleDrag(){
-      console.log('drag')
+    handleDrag(e) {
+      // this.lastDragSpot = { left: e.x, top: e.y }
     },
-    handleDragEnd(){
-      console.log('dragEnd')
+    handleDragEnd(e) {
+      let isCorrect = false
+      let positionId
+      let imageRealX = this.lastDragSpot.left - this.cursorOffset.left
+      let imageRealY = this.lastDragSpot.top - this.cursorOffset.top + window.scrollY
+
+      this.correctPositionRange[e.target.id].forEach(possibleLocation=>{
+        if (imageRealX>possibleLocation.x.min && imageRealX<possibleLocation.x.max && imageRealY>possibleLocation.y.min && imageRealY<possibleLocation.y.max && !this.positionsFilled[possibleLocation.id]) {
+          isCorrect = true
+          positionId = possibleLocation.id
+        }
+      })
+      if (isCorrect) {
+        for (let pos in this.positionsFilled) {
+          if (this.positionsFilled[pos] === e.target.id){
+            this.positionsFilled[pos] = null
+          }
+        }
+        this.positionsFilled[positionId] = e.target.id
+        this.dotLocations[e.target.id] = positionId
+        if (!this.isComplete) {
+          this.giveFeedbackCorrect()
+        } else {
+          this.giveFeedbackDone()
+        }
+      } else {
+        this.giveFeedbackWrong()
+      }
     },
   },
   mounted () {
