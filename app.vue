@@ -131,7 +131,7 @@ export default {
         this.showFeedbackDone = false
         clearInterval(this.doneColorIntervalId)
       },
-      dragStart(e) {
+      handleDragStart(e) {
         this.cursorOffset = { left: e.offsetX, top: e.offsetY }
       },
       handleDrag(e) {
@@ -196,7 +196,7 @@ export default {
       window.addEventListener('resize', this.handleResize)
       const dots = document.querySelectorAll('.dot');
       dots.forEach(dot => {
-        dot.addEventListener('dragstart', this.dragStart)
+        dot.addEventListener('dragstart', this.handleDragStart)
         dot.addEventListener('drag', this.handleDrag)
         dot.addEventListener('dragend', this.handleDragEnd)
       });
@@ -206,7 +206,7 @@ export default {
       window.removeEventListener('resize', this.handleResize)
       const dots = document.querySelectorAll('.dot');
       dots.forEach(dot => {
-        dot.removeEventListener('dragstart', this.dragStart)
+        dot.removeEventListener('dragstart', this.handleDragStart)
         dot.removeEventListener('drag', this.handleDrag)
         dot.removeEventListener('dragend', this.handleDragEnd)
       });
