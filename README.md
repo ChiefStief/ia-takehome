@@ -87,3 +87,9 @@ Ultimately, I decided to just use the number that I would get from looking up th
 
 The conceptual heft of solving the problem ultimately was not the most longstanding or frustrating part of implementing this solution. What took me much longer than I would have preferred was fighting the drag and drop api to do what I wanted it to do and handling syntax and loading / mount issues surrounding the images. It seems I was also not very successful at predicting the right values or problems regarding the feel of using the app. My redirections in how to approach the problem were mostly determined by a tool not operating the way I thought it would or the act of using the app in certain conditions not feeling the way I thought it would. In the future I will worry less about feel until I actually implement the solution because only then will I have accurate insight. I also think I will take a more intentional approach to validate the underlying tools that I do not yet fully understand as the solution to the problem depends on leveraging those tools. If I am sure how a tool works I will not need to redo problem solving work based on faulty understanding of those tools.
 
+**Opportunities for refactoring**  
+1) Have a component for a dot that takes in its source and id. Have an array or object containing those values be iterated over in a v-for on that component. Then have the component's style be a computed value inside the component and have the drag event handlers and correct position range be determined inside that component as well. This replaces many loops and their respective complexity that are in the current solution.
+2) Use global state to separate the global data from the feedback view data and previously mentioned dot view data to separate concerns and avoid large blocks of data initialization.
+3) Have a title reset button and data feedback component to localize the feedback display data.
+
+
