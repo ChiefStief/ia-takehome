@@ -27,7 +27,7 @@ Getting dimensions from images proved not 100% straightforward because they had 
 At this point I began to see that there was some complexity added by having two black dots that could go in either of two spots. I gave all of the images ids so they could be referred to specifically.
 
 **Validating DragEnd and Absolute Positioning approach**  
-I then manually used the dragEnd hook to determine the correct drop spot for each location. I saw that dragEnd had an X and Y coordinate.
+I then manually used the dragEnd hook to determine the correct drop spot for each location. I saw that dragEnd had an X and Y coordinate. 
 I knew that there needed to be some tolerance for drop location so I decided to have an algorithm where the location needed to be between a max and min for both its y and x coordinates. I also saw that black had two possible coordinate ranges so I had my algorithm take in an array. I changed the shape of the data to have the array higher up than I initially had it because it was easier to iterate over a block of code than to execute a block that has multiple loops.
 Inputting my manually found values I validated that my algorithm for determining drop correctness worked albeit with some exceptions related to the black dots that I explored later. To an extent I had prototyped initial problems 1 and 3.
 
@@ -45,41 +45,38 @@ I added Ids to the correct position data to help distinguish between the two dif
 **Drag Click Offsets**  
 At this point I noticed that the dragEnd hook reported your cursor's location and was not representative of where it appeared your dragged dot would be dropped as you could click and drag from the center or any corner of the dot and the offset from the cursor would remain. This presented a bit of a User Experience problem because I wanted the user to feel like they were actually dragging the dot to a specifc spot. I knew that I would eventually need to use this cursor offset in the correctness algorithm to determine if the dot, not the cursor, had been dragged to right place. I handle this later and will explain what I did then.
 
+**Reset Button**
+I added in saving the initial location data separately so that it could be referenced when clicking reset.
+
 ##Refining
 
 **Centering and using relative absolute positioning**  
-I was unsatisfied that the whole app was hap-hazardly placed on the left side of the screen. I centered the app by centering the incomplete logo image and then generating every absolute position and style at the same position relative to that image as before. I prefer both the look of the centered logo and the app being less hardcoded.
+I was unsatisfied that the whole app was haphazardly placed on the left side of the screen. I centered the app by centering the incomplete logo image and then generating every absolute position and style at the same position relative to that image as before. I prefer both the look of the centered logo and the app being less hardcoded.
 
-**Refactoring to use Computed More**  
+**Drag click Offset implementation**
+At this point I decided I needed to bite the bullet and implement the drag click offset to accurately determine where a dot had been dropped. I initially wanted to use the pythagorean thereom / 45-45 right triangles to find the click offset from the center of the dot using the initial click offset from dragStart. I almost immediately realized I was over-complicating this because the final relative absolute position css that I had recorded and was going to use referred to the location of the top left corner of the dot as well. This means that I would have to translate the coordinates in to be centered on the dot center and then back out to where they started. Leaving the coordinate system to use the upper left corner of the origin meant I was able to do none of this translating, despite the fact that it is harder to think about the dots visual location by using their upper left corner as the origin. I then added this offset to the correctness algorithm.
 
+**Handle dragEnd innacuracy and handleDrag hack**
+Once I was sure I had implemented the drag click offset correctly I expected the correctness logic to be complete and the project to work consistently. Unfortunately, the readings coming from the coordinates of dragEnd were very inconsistent. I scoured over the properties on the event but was unable to find a set of properties that could combine or be individually used to consistently locate the dragEnd. At this point one option I had was to make my correctness tolerances very wide so that there were no false negatives but create what I believed to be a too tolerant a correct drop zone. I found this unacceptable and generally not good enough, also this would completely defeat the purpose of using the radius for drop tolerance or the work I just did to incorporate the click offSet. I looked into bringing back the onMouseUp event handler but was having inconsistent firings while ending a drag. Ultimately, I went with recording the current location while dragging using handleDrag and then onDragEnd using that location as it would stop updating when the dragEnd and so the recorded current position was implicitly where the drag had ended. I am not thrilled with the solution because I am updating data very rapidly when I only need the last update.
 
-**HandleDragEnd innacuracy and handleDrag hack**  
-
-
-
+**Refactoring to use Computed More**
+I began to refactor my variable styles and positions that were consistently defined the same way to be computed properties rather than updating the state with a function. Functionally, these things were almost identical but it was wasteful to have to define and call a function when computed handles these updates.
 
 ##Finishing Up and Refactoring
 
+**Allow black swap**  
+The way I had implemented the solution up to this point allowed for the user to move one black dot from one possible correct location to the other but would then block that previous location from being accessed. I updated my solution to track which dots are filling which positions and to allow for this swap to take place. Truthfully, I am ambivalent to allowing swapping at all, the other option is to simply not allow dragging when the dot is placed, this would produce a more consistent experience across the dots as the other dots cannot swap due to not having two correct locations. 
+
 **handleResize**  
+It had been bothering me throughout this process that if I opened and closed dev tools my project would break because the absolute location of the center of the screen would change. I also feel decided handling screen resizing was important to the completeness of the project. Nothing the user could do using the normal browser GUI should break the project including screen resizing. Currently, the app should be resilient unless the user makes the screen thinner than the empty-logo image. Much of this was handled by refactoring to computed values that updated when their "input" data changed. I had to keep the offSet values as data that I manually updated because these did not seem to trigger computed re-loads. I also needed to add awareness of where each dot was from the dots' perspective so that I could update the dots' location to be either the newly defined correct or newly defined initial location. I could have computed this from the existing postions filled data but I thought it was easier to reference a new object called dotLocations. Generally, I tried to reduce redundantly defined (normalize) data unless it was simply easier maintain and reference copies. 
 
 **Title and Scroll Bug**  
-I added a title to the 
-
-
-**Refactoring to use Computed More again but with a twist**  
-
+I added a title to the app which pushed the bottom of the empty logo image off of the un-scrolled screen. This unveiled a bug: I was not handling scrolling. This is important because screens with lower pixel density than mine may have needed to scroll already. The app would not have worked properly on these screens. I added accounting for the vertical scroll location to the correctness algorithm to fix this bug.
 
 **User Feedback**  
-
-
-
+I added in some user feedback that shows up just below the title that gives positive feedback when the drop is correct, negative when wrong, and lets the user know when they have completed the task. I used red and green as these are commonly associated with correct and incorrect and changing colors for done as this felt festive and congratulatory.
 
 **Mostly Abondoning style generated based on image attributes**  
-Ultimately, I decided to just use the number that I would get from looking up the image attributes because this is a fixed value and looking up those attributes when they do not change is unnecessary complexity. I also abandoned using the dots' radius as the correctness tolerance because the number I settled on felt more correct when actually used.
+Ultimately, I decided to just use the number that I would get from looking up the image attributes because this is a fixed value and looking up those attributes when they do not change is unnecessary complexity. I also abandoned using the dots' radius as the correctness tolerance because the number I settled on felt more correct when actually used. Also, after more thought I decided that it is reasonable that a user may expect the drop to occur where the cursor is and I would like to have some extra tolerance for this GUI interpretation.
 
-
-
-```bash
-npm run dev
-```
 
