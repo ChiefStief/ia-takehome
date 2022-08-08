@@ -33,10 +33,10 @@ Inputting my manually found values I validated that my algorithm for determining
 
 ## Prototyping
 
-####Using Inspect Element to get the perfect position
+**Using Inspect Element to get the perfect position**  
 My previous drop zone validation work was not precise enough to tell me what the perfect final location was that the dots should end in. I opened up DevTools and manually edited the absolute positioning data until the circles were perfectly centered and recorded those numbers. These numbers became the final position and styling that the dots would snap to if correct.
 
-###Snap to Absolute Positioning and handleDrag vs default behaviour
+**Snap to Absolute Positioning and handleDrag vs default behaviour**  
 Without doing anything, the browser gives you a shadow of the item you are dragging around. Updating my dots' position with every drag required re-rendering on every drag event, and there were a tremendous amount. Because of these facts I decided it was best just to go with the browser drag preview. The only problem with this was that the default behavior has the preview snap back to its original position on drag end. If the drop was in the right place the dot would then appear back where it had been dragged to, ultimately looking terrible. As such I spent some time (an annoying amount) figuring out how to not do this and ultimately added in ```ondragover="event.preventDefault()"``` which makes the image not snap back. Now that the image did not snap back and just clicked into place I saw that this was not jarring and my initial random fear was unfounded. Fortunately, doing less was more in this case.
 
 ####Handling Black Dot Complexity
